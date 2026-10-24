@@ -25,6 +25,7 @@ public class GamePanel extends JPanel {
     private final Game game;
     private final GameLoop gameLoop;
     private final Screen menuScreen;
+    private final InputHandler inputHandler;
 
     public GamePanel(Game game) {
         if (game == null) {
@@ -37,6 +38,11 @@ public class GamePanel extends JPanel {
         setDoubleBuffered(true);
         setFocusable(true);
 
+        // Registra listeners de teclado e mouse
+        this.inputHandler = new InputHandler(game);
+        addKeyListener(inputHandler);
+        addMouseListener(inputHandler);
+
         // Inicializa o Game Loop repassando o repaint deste painel
         this.gameLoop = new GameLoop(game, this::repaint);
     }
@@ -46,6 +52,7 @@ public class GamePanel extends JPanel {
      */
     public void startGameLoop() {
         gameLoop.start();
+        requestFocusInWindow();
     }
 
     /**
@@ -63,6 +70,10 @@ public class GamePanel extends JPanel {
         return gameLoop;
     }
 
+    public InputHandler getInputHandler() {
+        return inputHandler;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -77,7 +88,10 @@ public class GamePanel extends JPanel {
         // 1. Desenha o fundo com gradiente de céu
         drawBackground(g2d);
 
-        // 2. Renderiza a tela correspondente ao estado atual (Polimorfismo via Screen)
+        // 2. Renderiza o pássaro
+        game.getBird().draw(g2d);
+
+        // 3. Renderiza a tela correspondente ao estado atual (Polimorfismo via Screen)
         if (game.getState() == GameState.MENU) {
             menuScreen.draw(g2d, game);
         }
