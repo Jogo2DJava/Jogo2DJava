@@ -1,14 +1,19 @@
 package flappybird.game;
 
 import flappybird.entities.Bird;
+import flappybird.entities.GameObject;
 import flappybird.entities.Ground;
 import flappybird.entities.PipePair;
 import flappybird.utils.GameConfig;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Representa a lógica central e o estado do jogo.
  *
- * <p><strong>Pilar da POO — Encapsulamento:</strong>
+ * <p><strong>Pilar da POO — Encapsulamento e Abstração:</strong>
  * O estado da partida, as entidades ({@link Bird}, {@link Ground}, {@link PipeManager})
  * e os subsistemas ({@link CollisionDetector}, {@link ScoreManager}) são mantidos privados.
  * O controle de fluxo ocorre exclusivamente por meio de métodos públicos controlados.</p>
@@ -150,6 +155,26 @@ public class Game {
         bird.reset();
         this.menuTick = 0;
         this.gameOverCooldown = 0;
+    }
+
+    /**
+     * Retorna a coleção polimórfica de todas as entidades ativas no mundo do jogo.
+     *
+     * <p><strong>Pilar da POO — Polimorfismo e Encapsulamento:</strong>
+     * Expõe referências do tipo base {@link GameObject} de forma imutável, permitindo
+     * que consumidores tratem pássaro, chão e canos de forma uniforme sem recorrer a {@code instanceof}.</p>
+     *
+     * @return lista imutável de {@link GameObject}.
+     */
+    public List<GameObject> getGameObjects() {
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(bird);
+        objects.add(ground);
+        for (PipePair pair : pipeManager.getPipePairs()) {
+            objects.add(pair.getTopPipe());
+            objects.add(pair.getBottomPipe());
+        }
+        return Collections.unmodifiableList(objects);
     }
 
     public GameState getState() {
