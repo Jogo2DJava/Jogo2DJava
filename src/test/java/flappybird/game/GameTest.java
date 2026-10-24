@@ -5,7 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Testes unitários para a máquina de estados e fluxo lógico do jogo.
@@ -54,6 +56,36 @@ class GameTest {
 
         assertEquals(2, game.getScore());
         assertEquals(2, game.getBestScore());
+    }
+
+    @Test
+    @DisplayName("Deve bloquear reinício durante o tempo de cooldown de proteção no Game Over")
+    void deveBloquearReinicioDuranteCooldown() {
+        Game game = new Game();
+        game.start();
+
+        // Derruba o pássaro até o chão para disparar o Game Over
+        for (int i = 0; i < 80; i++) {
+            game.update();
+        }
+
+        assertEquals(GameState.GAME_OVER, game.getState());
+        assertTrue(game.getGameOverCooldown() > 0, "O cooldown deve ser ativado no Game Over");
+        assertFalse(game.canRestart(), "Não deve permitir reinício imediato");
+
+        // Tenta reiniciar antes do término do cooldown (deve ser ignorado)
+        game.restart();
+        assertEquals(GameState.GAME_OVER, game.getState(), "Deve permanecer em GAME_OVER");
+
+        // Simula a passagem de ticks até esgotar o cooldown
+        while (game.getGameOverCooldown() > 0) {
+            game.update();
+        }
+
+        assertTrue(game.canRestart(), "Agora deve permitir o reinício");
+        game.restart();
+        assertEquals(GameState.PLAYING, game.getState(), "Deve reiniciar para PLAYING");
+        assertEquals(0, game.getScore(), "Pontuação deve zerar");
     }
 
     @Test
