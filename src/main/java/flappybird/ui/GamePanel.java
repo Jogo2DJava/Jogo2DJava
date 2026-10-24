@@ -26,6 +26,7 @@ public class GamePanel extends JPanel {
     private final GameLoop gameLoop;
     private final Screen menuScreen;
     private final Screen hudScreen;
+    private final Screen gameOverScreen;
     private final InputHandler inputHandler;
 
     public GamePanel(Game game) {
@@ -35,6 +36,7 @@ public class GamePanel extends JPanel {
         this.game = game;
         this.menuScreen = new MenuScreen();
         this.hudScreen = new HudScreen();
+        this.gameOverScreen = new GameOverScreen();
 
         setPreferredSize(new Dimension(GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT));
         setDoubleBuffered(true);
@@ -104,6 +106,8 @@ public class GamePanel extends JPanel {
             menuScreen.draw(g2d, game);
         } else if (game.getState() == GameState.PLAYING) {
             hudScreen.draw(g2d, game);
+        } else if (game.getState() == GameState.GAME_OVER) {
+            gameOverScreen.draw(g2d, game);
         }
     }
 

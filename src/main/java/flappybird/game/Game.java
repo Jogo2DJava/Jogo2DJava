@@ -24,6 +24,7 @@ public class Game {
     private final ScoreManager scoreManager;
 
     private int menuTick;
+    private int gameOverCooldown;
 
     public Game() {
         this(new PipeManager(), new CollisionDetector(), new ScoreManager());
@@ -54,6 +55,7 @@ public class Game {
         this.collisionDetector = collisionDetector;
         this.scoreManager = scoreManager;
         this.menuTick = 0;
+        this.gameOverCooldown = 0;
     }
 
     /**
@@ -61,7 +63,9 @@ public class Game {
      */
     public void update() {
         // O chão rola continuamente no menu e na partida
-        ground.update();
+        if (state != GameState.GAME_OVER) {
+            ground.update();
+        }
 
         if (state == GameState.MENU) {
             // No menu, o pássaro realiza flutuação suave
@@ -82,9 +86,19 @@ public class Game {
 
             // Verifica colisão imediatamente após as atualizações de posição
             if (collisionDetector.checkCollision(bird, ground, pipeManager.getPipePairs())) {
-                this.state = GameState.GAME_OVER;
+                triggerGameOver();
+            }
+        } else if (state == GameState.GAME_OVER) {
+            // Decrementa o tempo de espera de proteção antes de aceitar reinício
+            if (gameOverCooldown > 0) {
+                gameOverCooldown--;
             }
         }
+    }
+
+    private void triggerGameOver() {
+        this.state = GameState.GAME_OVER;
+        this.gameOverCooldown = 30; // 30 ticks = 0.5s de proteção contra cliques acidentais
     }
 
     /**
@@ -112,9 +126,13 @@ public class Game {
     }
 
     /**
-     * Reinicia a partida após o Game Over.
+     * Reinicia a partida após o Game Over (após decorrido o tempo de proteção).
      */
     public void restart() {
+        if (state == GameState.GAME_OVER && gameOverCooldown > 0) {
+            // Ignora toques acidentais imediatamente após a colisão
+            return;
+        }
         this.state = GameState.PLAYING;
         scoreManager.reset();
         pipeManager.reset();
@@ -131,6 +149,7 @@ public class Game {
         pipeManager.reset();
         bird.reset();
         this.menuTick = 0;
+        this.gameOverCooldown = 0;
     }
 
     public GameState getState() {
@@ -167,5 +186,13 @@ public class Game {
 
     public ScoreManager getScoreManager() {
         return scoreManager;
+    }
+
+    public int getGameOverCooldown() {
+        return gameOverCooldown;
+    }
+
+    public boolean canRestart() {
+        return state == GameState.GAME_OVER && gameOverCooldown <= 0;
     }
 }
