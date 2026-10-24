@@ -2,6 +2,7 @@ package flappybird.game;
 
 import flappybird.entities.Bird;
 import flappybird.entities.Ground;
+import flappybird.entities.PipePair;
 import flappybird.utils.GameConfig;
 
 /**
@@ -9,44 +10,49 @@ import flappybird.utils.GameConfig;
  *
  * <p><strong>Pilar da POO — Encapsulamento:</strong>
  * O estado da partida, as entidades ({@link Bird}, {@link Ground}, {@link PipeManager})
- * e os subsistemas ({@link CollisionDetector}) são mantidos privados.
+ * e os subsistemas ({@link CollisionDetector}, {@link ScoreManager}) são mantidos privados.
  * O controle de fluxo ocorre exclusivamente por meio de métodos públicos controlados.</p>
  */
 public class Game {
 
     private GameState state;
-    private int score;
-    private int bestScore;
 
     private final Bird bird;
     private final Ground ground;
     private final PipeManager pipeManager;
     private final CollisionDetector collisionDetector;
+    private final ScoreManager scoreManager;
 
     private int menuTick;
 
     public Game() {
-        this(new PipeManager(), new CollisionDetector());
+        this(new PipeManager(), new CollisionDetector(), new ScoreManager());
     }
 
     public Game(PipeManager pipeManager) {
-        this(pipeManager, new CollisionDetector());
+        this(pipeManager, new CollisionDetector(), new ScoreManager());
     }
 
     public Game(PipeManager pipeManager, CollisionDetector collisionDetector) {
+        this(pipeManager, collisionDetector, new ScoreManager());
+    }
+
+    public Game(PipeManager pipeManager, CollisionDetector collisionDetector, ScoreManager scoreManager) {
         if (pipeManager == null) {
             throw new IllegalArgumentException("PipeManager não pode ser nulo.");
         }
         if (collisionDetector == null) {
             throw new IllegalArgumentException("CollisionDetector não pode ser nulo.");
         }
+        if (scoreManager == null) {
+            throw new IllegalArgumentException("ScoreManager não pode ser nulo.");
+        }
         this.state = GameState.MENU;
-        this.score = 0;
-        this.bestScore = 0;
         this.bird = new Bird();
         this.ground = new Ground();
         this.pipeManager = pipeManager;
         this.collisionDetector = collisionDetector;
+        this.scoreManager = scoreManager;
         this.menuTick = 0;
     }
 
@@ -54,7 +60,7 @@ public class Game {
      * Atualiza a lógica da partida a cada passo fixo (60 vezes por segundo).
      */
     public void update() {
-        // O chão rola continuamente tanto no menu quanto na partida
+        // O chão rola continuamente no menu e na partida
         ground.update();
 
         if (state == GameState.MENU) {
@@ -65,6 +71,14 @@ public class Game {
             // Atualiza física do pássaro e deslocamento dos obstáculos
             bird.update();
             pipeManager.update();
+
+            // Verifica se o pássaro ultrapassou novos obstáculos para pontuar
+            for (PipePair pair : pipeManager.getPipePairs()) {
+                if (!pair.isPassed() && bird.getX() > (pair.getX() + pair.getTopPipe().getWidth())) {
+                    pair.setPassed(true);
+                    scoreManager.increment();
+                }
+            }
 
             // Verifica colisão imediatamente após as atualizações de posição
             if (collisionDetector.checkCollision(bird, ground, pipeManager.getPipePairs())) {
@@ -79,6 +93,7 @@ public class Game {
     public void start() {
         if (state == GameState.MENU) {
             this.state = GameState.PLAYING;
+            scoreManager.reset();
             pipeManager.reset();
             bird.reset();
             bird.flap();
@@ -100,8 +115,8 @@ public class Game {
      * Reinicia a partida após o Game Over.
      */
     public void restart() {
-        this.score = 0;
         this.state = GameState.PLAYING;
+        scoreManager.reset();
         pipeManager.reset();
         bird.reset();
         bird.flap();
@@ -111,8 +126,8 @@ public class Game {
      * Retorna ao menu inicial.
      */
     public void backToMenu() {
-        this.score = 0;
         this.state = GameState.MENU;
+        scoreManager.reset();
         pipeManager.reset();
         bird.reset();
         this.menuTick = 0;
@@ -127,18 +142,11 @@ public class Game {
     }
 
     public int getScore() {
-        return score;
+        return scoreManager.getScore();
     }
 
     public int getBestScore() {
-        return bestScore;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-        if (score > this.bestScore) {
-            this.bestScore = score;
-        }
+        return scoreManager.getBestScore();
     }
 
     public Bird getBird() {
@@ -155,5 +163,9 @@ public class Game {
 
     public CollisionDetector getCollisionDetector() {
         return collisionDetector;
+    }
+
+    public ScoreManager getScoreManager() {
+        return scoreManager;
     }
 }

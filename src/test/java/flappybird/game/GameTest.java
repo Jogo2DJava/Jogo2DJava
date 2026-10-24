@@ -45,29 +45,29 @@ class GameTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar o melhor placar quando a pontuação atual for maior")
+    @DisplayName("Deve atualizar o melhor placar quando a pontuação atual for incrementada")
     void deveAtualizarMelhorPlacar() {
         Game game = new Game();
-        game.setScore(5);
-        assertEquals(5, game.getScore());
-        assertEquals(5, game.getBestScore());
+        game.start();
+        game.getScoreManager().increment();
+        game.getScoreManager().increment();
 
-        game.setScore(3);
-        assertEquals(3, game.getScore());
-        assertEquals(5, game.getBestScore(), "O recorde anterior deve ser preservado");
+        assertEquals(2, game.getScore());
+        assertEquals(2, game.getBestScore());
     }
 
     @Test
-    @DisplayName("Deve retornar ao estado MENU e resetar pássaro ao chamar backToMenu")
+    @DisplayName("Deve retornar ao estado MENU e resetar pontuação mantendo recorde ao chamar backToMenu")
     void deveRetornarAoMenu() {
         Game game = new Game();
         game.start();
-        game.setScore(10);
+        game.getScoreManager().increment();
+        game.getScoreManager().increment();
 
         game.backToMenu();
         assertEquals(GameState.MENU, game.getState());
         assertEquals(0, game.getScore());
-        assertEquals(10, game.getBestScore(), "O recorde deve ser mantido mesmo voltando ao menu");
+        assertEquals(2, game.getBestScore(), "O recorde deve ser mantido mesmo voltando ao menu");
         assertEquals(GameConfig.BIRD_START_X, game.getBird().getX(), 0.001);
     }
 }
