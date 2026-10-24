@@ -1,0 +1,24 @@
+# Saída do build do Maven (arquivos .class e .jar gerados)
+target/
+
+# Classes compiladas fora do Maven
+*.class
+bin/
+out/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+
+# Logs
+*.log
+
+# Arquivos do sistema operacional
+Thumbs.db
+desktop.ini
+.DS_Store

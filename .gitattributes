@@ -1,0 +1,6 @@
+# Normaliza finais de linha entre Windows, Linux e macOS
+* text=auto
+
+# Scripts do Maven Wrapper: cada um precisa do final de linha do seu sistema
+mvnw text eol=lf
+*.cmd text eol=crlf
