@@ -25,6 +25,7 @@ public class GamePanel extends JPanel {
     private final Game game;
     private final GameLoop gameLoop;
     private final Screen menuScreen;
+    private final Screen hudScreen;
     private final InputHandler inputHandler;
 
     public GamePanel(Game game) {
@@ -33,6 +34,7 @@ public class GamePanel extends JPanel {
         }
         this.game = game;
         this.menuScreen = new MenuScreen();
+        this.hudScreen = new HudScreen();
 
         setPreferredSize(new Dimension(GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT));
         setDoubleBuffered(true);
@@ -100,6 +102,8 @@ public class GamePanel extends JPanel {
         // 5. Interface da tela atual (Polimorfismo via Screen)
         if (game.getState() == GameState.MENU) {
             menuScreen.draw(g2d, game);
+        } else if (game.getState() == GameState.PLAYING) {
+            hudScreen.draw(g2d, game);
         }
     }
 
