@@ -9,8 +9,8 @@ import flappybird.utils.GameConfig;
  *
  * <p><strong>Pilar da POO — Encapsulamento:</strong>
  * O estado da partida, as entidades ({@link Bird}, {@link Ground}, {@link PipeManager})
- * e a pontuação são mantidos privados. O controle de fluxo ocorre exclusivamente por meio
- * de métodos públicos controlados como {@link #start()}, {@link #flap()}, {@link #restart()} e {@link #update()}.</p>
+ * e os subsistemas ({@link CollisionDetector}) são mantidos privados.
+ * O controle de fluxo ocorre exclusivamente por meio de métodos públicos controlados.</p>
  */
 public class Game {
 
@@ -21,20 +21,32 @@ public class Game {
     private final Bird bird;
     private final Ground ground;
     private final PipeManager pipeManager;
+    private final CollisionDetector collisionDetector;
 
     private int menuTick;
 
     public Game() {
-        this(new PipeManager());
+        this(new PipeManager(), new CollisionDetector());
     }
 
     public Game(PipeManager pipeManager) {
+        this(pipeManager, new CollisionDetector());
+    }
+
+    public Game(PipeManager pipeManager, CollisionDetector collisionDetector) {
+        if (pipeManager == null) {
+            throw new IllegalArgumentException("PipeManager não pode ser nulo.");
+        }
+        if (collisionDetector == null) {
+            throw new IllegalArgumentException("CollisionDetector não pode ser nulo.");
+        }
         this.state = GameState.MENU;
         this.score = 0;
         this.bestScore = 0;
         this.bird = new Bird();
         this.ground = new Ground();
         this.pipeManager = pipeManager;
+        this.collisionDetector = collisionDetector;
         this.menuTick = 0;
     }
 
@@ -53,6 +65,11 @@ public class Game {
             // Atualiza física do pássaro e deslocamento dos obstáculos
             bird.update();
             pipeManager.update();
+
+            // Verifica colisão imediatamente após as atualizações de posição
+            if (collisionDetector.checkCollision(bird, ground, pipeManager.getPipePairs())) {
+                this.state = GameState.GAME_OVER;
+            }
         }
     }
 
@@ -134,5 +151,9 @@ public class Game {
 
     public PipeManager getPipeManager() {
         return pipeManager;
+    }
+
+    public CollisionDetector getCollisionDetector() {
+        return collisionDetector;
     }
 }
