@@ -80,18 +80,24 @@ public class GamePanel extends JPanel {
 
         Graphics2D g2d = (Graphics2D) g;
 
-        // Ativa suavização de bordas (Anti-Aliasing) para visual premium
+        // Ativa suavização de bordas (Anti-Aliasing) para visual refinado
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-        // 1. Desenha o fundo com gradiente de céu
+        // 1. Céu com gradiente e nuvens de fundo
         drawBackground(g2d);
 
-        // 2. Renderiza o pássaro
+        // 2. Obstáculos (canos)
+        game.getPipeManager().draw(g2d);
+
+        // 3. Chão móvel com textura de rolagem contínua
+        game.getGround().draw(g2d);
+
+        // 4. Pássaro controlado pelo jogador
         game.getBird().draw(g2d);
 
-        // 3. Renderiza a tela correspondente ao estado atual (Polimorfismo via Screen)
+        // 5. Interface da tela atual (Polimorfismo via Screen)
         if (game.getState() == GameState.MENU) {
             menuScreen.draw(g2d, game);
         }
