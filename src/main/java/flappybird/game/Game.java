@@ -1,14 +1,15 @@
 package flappybird.game;
 
 import flappybird.entities.Bird;
+import flappybird.entities.Ground;
 import flappybird.utils.GameConfig;
 
 /**
  * Representa a lógica central e o estado do jogo.
  *
  * <p><strong>Pilar da POO — Encapsulamento:</strong>
- * O estado da partida (máquina de estados), a entidade {@link Bird} e pontuações
- * são mantidos privados. O controle de fluxo ocorre exclusivamente por meio
+ * O estado da partida, as entidades ({@link Bird}, {@link Ground}, {@link PipeManager})
+ * e a pontuação são mantidos privados. O controle de fluxo ocorre exclusivamente por meio
  * de métodos públicos controlados como {@link #start()}, {@link #flap()}, {@link #restart()} e {@link #update()}.</p>
  */
 public class Game {
@@ -16,14 +17,24 @@ public class Game {
     private GameState state;
     private int score;
     private int bestScore;
+
     private final Bird bird;
+    private final Ground ground;
+    private final PipeManager pipeManager;
+
     private int menuTick;
 
     public Game() {
+        this(new PipeManager());
+    }
+
+    public Game(PipeManager pipeManager) {
         this.state = GameState.MENU;
         this.score = 0;
         this.bestScore = 0;
         this.bird = new Bird();
+        this.ground = new Ground();
+        this.pipeManager = pipeManager;
         this.menuTick = 0;
     }
 
@@ -31,16 +42,17 @@ public class Game {
      * Atualiza a lógica da partida a cada passo fixo (60 vezes por segundo).
      */
     public void update() {
+        // O chão rola continuamente tanto no menu quanto na partida
+        ground.update();
+
         if (state == GameState.MENU) {
-            // No menu, o pássaro realiza uma flutuação senoidal suave e agradável
-            double hoverY = GameConfig.BIRD_START_Y + (Math.sin(menuTick * 0.08) * 6.0);
+            // No menu, o pássaro realiza flutuação suave
             bird.reset();
-            bird.setVelocityY(0.0);
-            // Simula uma leve ondulação visual
             menuTick++;
         } else if (state == GameState.PLAYING) {
-            // Atualiza a física do pássaro
+            // Atualiza física do pássaro e deslocamento dos obstáculos
             bird.update();
+            pipeManager.update();
         }
     }
 
@@ -50,6 +62,7 @@ public class Game {
     public void start() {
         if (state == GameState.MENU) {
             this.state = GameState.PLAYING;
+            pipeManager.reset();
             bird.reset();
             bird.flap();
         }
@@ -72,6 +85,7 @@ public class Game {
     public void restart() {
         this.score = 0;
         this.state = GameState.PLAYING;
+        pipeManager.reset();
         bird.reset();
         bird.flap();
     }
@@ -82,6 +96,7 @@ public class Game {
     public void backToMenu() {
         this.score = 0;
         this.state = GameState.MENU;
+        pipeManager.reset();
         bird.reset();
         this.menuTick = 0;
     }
@@ -111,5 +126,13 @@ public class Game {
 
     public Bird getBird() {
         return bird;
+    }
+
+    public Ground getGround() {
+        return ground;
+    }
+
+    public PipeManager getPipeManager() {
+        return pipeManager;
     }
 }
