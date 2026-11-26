@@ -15,6 +15,7 @@ import java.awt.Graphics2D;
 public class Pipe extends GameObject {
 
     private final boolean top;
+    private final double speed;
 
     // Paleta de cores do cano (verde clássico com sombreamento tridimensional)
     private static final Color PIPE_GREEN = new Color(115, 191, 46);
@@ -35,14 +36,32 @@ public class Pipe extends GameObject {
      * @param top {@code true} se for o cano pendurado no teto; {@code false} se surgir do chão.
      */
     public Pipe(double x, double y, int width, int height, boolean top) {
+        this(x, y, width, height, top, GameConfig.PIPE_SPEED);
+    }
+
+    /**
+     * Constrói um cano com posição, dimensões e velocidade horizontal customizada.
+     *
+     * @param x posição horizontal inicial.
+     * @param y posição vertical inicial.
+     * @param width largura do cano.
+     * @param height altura do cano.
+     * @param top {@code true} se for o cano pendurado no teto; {@code false} se surgir do chão.
+     * @param speed velocidade de deslocamento horizontal para a esquerda.
+     */
+    public Pipe(double x, double y, int width, int height, boolean top, double speed) {
         super(x, y, width, height);
+        if (speed <= 0) {
+            throw new IllegalArgumentException("A velocidade do cano deve ser positiva.");
+        }
         this.top = top;
+        this.speed = speed;
     }
 
     @Override
     public void update() {
         // Desloca o obstáculo em direção à esquerda na velocidade configurada
-        moveBy(-GameConfig.PIPE_SPEED, 0);
+        moveBy(-speed, 0);
     }
 
     /**
@@ -100,5 +119,9 @@ public class Pipe extends GameObject {
 
     public boolean isTop() {
         return top;
+    }
+
+    public double getSpeed() {
+        return speed;
     }
 }

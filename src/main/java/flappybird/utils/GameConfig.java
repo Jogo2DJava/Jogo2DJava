@@ -32,11 +32,17 @@ public final class GameConfig {
     public static final double JUMP_FORCE = -8.0;
     public static final double MAX_FALL_SPEED = 10.0;
 
-    // --- Parâmetros dos Obstáculos ---
+    // --- Parâmetros dos Obstáculos (Modo Médio / Padrão) ---
     public static final int PIPE_WIDTH = 70;
     public static final int PIPE_GAP = 150;
     public static final double PIPE_SPEED = 2.5;
     public static final int PIPE_SPAWN_INTERVAL = 90; // a cada 1.5 segundo (90 ticks)
+
+    // --- Parâmetros do Modo Difícil (HARD) ---
+    public static final double HARD_GRAVITY = 0.52;
+    public static final int HARD_PIPE_GAP = 120;
+    public static final double HARD_PIPE_SPEED = 3.6;
+    public static final int HARD_PIPE_SPAWN_INTERVAL = 68;
 
     private GameConfig() {
         // Impede a instanciação externa.

@@ -1,5 +1,6 @@
 package flappybird.entities;
 
+import flappybird.game.Difficulty;
 import flappybird.utils.GameConfig;
 
 import java.awt.Color;
@@ -25,6 +26,7 @@ import java.awt.geom.AffineTransform;
 public class Bird extends GameObject {
 
     private double velocityY;
+    private double gravity;
     private int wingTick;
 
     // Paleta de cores do dragãozinho (verde escuro com detalhes de fogo)
@@ -42,10 +44,34 @@ public class Bird extends GameObject {
     private static final Color FLAME_INNER = new Color(255, 235, 70);
 
     public Bird() {
+        this(GameConfig.GRAVITY);
+    }
+
+    public Bird(Difficulty difficulty) {
+        this(difficulty != null ? difficulty.getGravity() : GameConfig.GRAVITY);
+    }
+
+    public Bird(double gravity) {
         super(GameConfig.BIRD_START_X, GameConfig.BIRD_START_Y,
                 GameConfig.BIRD_WIDTH, GameConfig.BIRD_HEIGHT);
+        if (gravity <= 0) {
+            throw new IllegalArgumentException("A gravidade deve ser positiva.");
+        }
+        this.gravity = gravity;
         this.velocityY = 0.0;
         this.wingTick = 0;
+    }
+
+    /**
+     * Aplica os parâmetros físicos correspondentes à dificuldade informada.
+     *
+     * @param difficulty modo de dificuldade ativo.
+     */
+    public void applyDifficulty(Difficulty difficulty) {
+        if (difficulty == null) {
+            throw new IllegalArgumentException("A dificuldade não pode ser nula.");
+        }
+        this.gravity = difficulty.getGravity();
     }
 
     /**
@@ -67,8 +93,8 @@ public class Bird extends GameObject {
 
     @Override
     public void update() {
-        // Aplica aceleração gravitacional a cada tick
-        velocityY += GameConfig.GRAVITY;
+        // Aplica aceleração gravitacional configurada para a dificuldade atual a cada tick
+        velocityY += gravity;
 
         // Limita a velocidade terminal de queda
         if (velocityY > GameConfig.MAX_FALL_SPEED) {
@@ -282,5 +308,16 @@ public class Bird extends GameObject {
 
     public void setVelocityY(double velocityY) {
         this.velocityY = velocityY;
+    }
+
+    public double getGravity() {
+        return gravity;
+    }
+
+    public void setGravity(double gravity) {
+        if (gravity <= 0) {
+            throw new IllegalArgumentException("A gravidade deve ser positiva.");
+        }
+        this.gravity = gravity;
     }
 }

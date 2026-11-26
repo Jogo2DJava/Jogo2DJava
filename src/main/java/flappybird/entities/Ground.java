@@ -1,5 +1,6 @@
 package flappybird.entities;
 
+import flappybird.game.Difficulty;
 import flappybird.utils.GameConfig;
 
 import java.awt.Color;
@@ -15,6 +16,7 @@ import java.awt.Graphics2D;
 public class Ground extends GameObject {
 
     private double scrollOffset;
+    private double scrollSpeed;
 
     // Paleta de cores do chão
     private static final Color GRASS_TOP = new Color(115, 191, 46);
@@ -29,12 +31,29 @@ public class Ground extends GameObject {
         super(0, GameConfig.WINDOW_HEIGHT - GameConfig.GROUND_HEIGHT,
                 GameConfig.WINDOW_WIDTH, GameConfig.GROUND_HEIGHT);
         this.scrollOffset = 0.0;
+        this.scrollSpeed = GameConfig.PIPE_SPEED;
+    }
+
+    /**
+     * Sincroniza a velocidade de rolagem do chão com a dificuldade selecionada.
+     *
+     * @param difficulty modo de dificuldade ativo.
+     */
+    public void applyDifficulty(Difficulty difficulty) {
+        if (difficulty == null) {
+            throw new IllegalArgumentException("A dificuldade não pode ser nula.");
+        }
+        this.scrollSpeed = difficulty.getPipeSpeed();
     }
 
     @Override
     public void update() {
         // Incrementa o deslocamento visual sincronizado com a velocidade dos canos
-        scrollOffset = (scrollOffset + GameConfig.PIPE_SPEED) % STRIPE_SPACING;
+        scrollOffset = (scrollOffset + scrollSpeed) % STRIPE_SPACING;
+    }
+
+    public double getScrollSpeed() {
+        return scrollSpeed;
     }
 
     @Override

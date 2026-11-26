@@ -27,12 +27,24 @@ public class PipePair {
      * @param gap abertura livre entre os dois canos em pixels.
      */
     public PipePair(double x, int topHeight, int gap) {
+        this(x, topHeight, gap, GameConfig.PIPE_SPEED);
+    }
+
+    /**
+     * Constrói um par de canos calculando as alturas com base na abertura e velocidade informadas.
+     *
+     * @param x posição horizontal inicial do par.
+     * @param topHeight altura do cano superior.
+     * @param gap abertura livre entre os dois canos em pixels.
+     * @param speed velocidade horizontal de deslocamento dos canos.
+     */
+    public PipePair(double x, int topHeight, int gap, double speed) {
         int groundY = GameConfig.WINDOW_HEIGHT - GameConfig.GROUND_HEIGHT;
         int bottomY = topHeight + gap;
         int bottomHeight = groundY - bottomY;
 
-        this.topPipe = new Pipe(x, 0, GameConfig.PIPE_WIDTH, topHeight, true);
-        this.bottomPipe = new Pipe(x, bottomY, GameConfig.PIPE_WIDTH, bottomHeight, false);
+        this.topPipe = new Pipe(x, 0, GameConfig.PIPE_WIDTH, topHeight, true, speed);
+        this.bottomPipe = new Pipe(x, bottomY, GameConfig.PIPE_WIDTH, bottomHeight, false, speed);
         this.passed = false;
     }
 

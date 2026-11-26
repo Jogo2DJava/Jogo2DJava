@@ -21,6 +21,7 @@ import java.util.List;
 public class Game {
 
     private GameState state;
+    private Difficulty difficulty;
 
     private final Bird bird;
     private final Ground ground;
@@ -54,6 +55,7 @@ public class Game {
             throw new IllegalArgumentException("ScoreManager não pode ser nulo.");
         }
         this.state = GameState.MENU;
+        this.difficulty = Difficulty.MEDIUM;
         this.bird = new Bird();
         this.ground = new Ground();
         this.pipeManager = pipeManager;
@@ -61,6 +63,13 @@ public class Game {
         this.scoreManager = scoreManager;
         this.menuTick = 0;
         this.gameOverCooldown = 0;
+        applyDifficultySettings();
+    }
+
+    private void applyDifficultySettings() {
+        pipeManager.setDifficulty(difficulty);
+        bird.applyDifficulty(difficulty);
+        ground.applyDifficulty(difficulty);
     }
 
     /**
@@ -112,6 +121,7 @@ public class Game {
     public void start() {
         if (state == GameState.MENU) {
             this.state = GameState.PLAYING;
+            applyDifficultySettings();
             scoreManager.reset();
             pipeManager.reset();
             bird.reset();
@@ -139,6 +149,7 @@ public class Game {
             return;
         }
         this.state = GameState.PLAYING;
+        applyDifficultySettings();
         scoreManager.reset();
         pipeManager.reset();
         bird.reset();
@@ -183,6 +194,38 @@ public class Game {
 
     public void setState(GameState state) {
         this.state = state;
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
+    }
+
+    /**
+     * Altera o nível de dificuldade do jogo.
+     *
+     * <p>Por segurança de regras de negócio, a alteração só é permitida enquanto o jogo
+     * estiver no estado {@link GameState#MENU}.</p>
+     *
+     * @param difficulty nova dificuldade desejada.
+     */
+    public void setDifficulty(Difficulty difficulty) {
+        if (difficulty == null) {
+            throw new IllegalArgumentException("A dificuldade não pode ser nula.");
+        }
+        if (state == GameState.MENU) {
+            this.difficulty = difficulty;
+            applyDifficultySettings();
+        }
+    }
+
+    /**
+     * Alterna entre os modos de dificuldade disponíveis ({@link Difficulty#MEDIUM} e {@link Difficulty#HARD})
+     * quando o jogo está no menu inicial.
+     */
+    public void toggleDifficulty() {
+        if (state == GameState.MENU) {
+            setDifficulty(difficulty.toggle());
+        }
     }
 
     public int getScore() {
