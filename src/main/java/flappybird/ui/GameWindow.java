@@ -4,6 +4,8 @@ import flappybird.game.Game;
 import flappybird.utils.GameConfig;
 
 import javax.swing.JFrame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Janela principal do jogo.
@@ -27,6 +29,15 @@ public class GameWindow extends JFrame {
 
         pack();
         setLocationRelativeTo(null);
+
+        // Libera recursos de áudio e para o loop ao fechar a janela
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                gamePanel.stopGameLoop();
+                gamePanel.disposeAudio();
+            }
+        });
 
         // Inicia o Game Loop após a criação da interface
         gamePanel.startGameLoop();

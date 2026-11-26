@@ -1,5 +1,6 @@
 package flappybird.ui;
 
+import flappybird.audio.MusicPlayer;
 import flappybird.game.Game;
 import flappybird.game.GameLoop;
 import flappybird.game.GameState;
@@ -28,12 +29,21 @@ public class GamePanel extends JPanel {
     private final Screen hudScreen;
     private final Screen gameOverScreen;
     private final InputHandler inputHandler;
+    private final MusicPlayer musicPlayer;
 
     public GamePanel(Game game) {
+        this(game, new MusicPlayer());
+    }
+
+    public GamePanel(Game game, MusicPlayer musicPlayer) {
         if (game == null) {
             throw new IllegalArgumentException("O jogo não pode ser nulo.");
         }
+        if (musicPlayer == null) {
+            throw new IllegalArgumentException("O reprodutor de música não pode ser nulo.");
+        }
         this.game = game;
+        this.musicPlayer = musicPlayer;
         this.menuScreen = new MenuScreen();
         this.hudScreen = new HudScreen();
         this.gameOverScreen = new GameOverScreen();
@@ -43,7 +53,7 @@ public class GamePanel extends JPanel {
         setFocusable(true);
 
         // Registra listeners de teclado e mouse
-        this.inputHandler = new InputHandler(game);
+        this.inputHandler = new InputHandler(game, musicPlayer::toggleMute);
         addKeyListener(inputHandler);
         addMouseListener(inputHandler);
 
@@ -52,18 +62,31 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * Inicia o ciclo de execução e atualização do jogo.
+     * Inicia o ciclo de execução e atualização do jogo e a música de fundo.
      */
     public void startGameLoop() {
         gameLoop.start();
+        musicPlayer.playLoop();
         requestFocusInWindow();
     }
 
     /**
-     * Interrompe o ciclo do jogo.
+     * Interrompe o ciclo do jogo e a música de fundo.
      */
     public void stopGameLoop() {
         gameLoop.stop();
+        musicPlayer.stop();
+    }
+
+    /**
+     * Libera os recursos de áudio alocados.
+     */
+    public void disposeAudio() {
+        musicPlayer.close();
+    }
+
+    public MusicPlayer getMusicPlayer() {
+        return musicPlayer;
     }
 
     public Game getGame() {
