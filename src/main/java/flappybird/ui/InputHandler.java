@@ -1,5 +1,6 @@
 package flappybird.ui;
 
+import flappybird.game.Difficulty;
 import flappybird.game.Game;
 import flappybird.game.GameState;
 
@@ -23,6 +24,7 @@ public class InputHandler extends MouseAdapter implements java.awt.event.KeyList
     private final Runnable onToggleMute;
     private boolean spacePressed;
     private boolean mutePressed;
+    private boolean difficultyKeyPressed;
 
     public InputHandler(Game game) {
         this(game, null);
@@ -36,6 +38,7 @@ public class InputHandler extends MouseAdapter implements java.awt.event.KeyList
         this.onToggleMute = onToggleMute;
         this.spacePressed = false;
         this.mutePressed = false;
+        this.difficultyKeyPressed = false;
     }
 
     private void handlePrimaryAction() {
@@ -67,6 +70,21 @@ public class InputHandler extends MouseAdapter implements java.awt.event.KeyList
                 mutePressed = true;
                 onToggleMute.run();
             }
+        } else if (isDifficultyToggleKey(keyCode)) {
+            if (!difficultyKeyPressed && game.getState() == GameState.MENU) {
+                difficultyKeyPressed = true;
+                game.toggleDifficulty();
+            }
+        } else if (keyCode == KeyEvent.VK_1 || keyCode == KeyEvent.VK_NUMPAD1) {
+            if (!difficultyKeyPressed && game.getState() == GameState.MENU) {
+                difficultyKeyPressed = true;
+                game.setDifficulty(Difficulty.MEDIUM);
+            }
+        } else if (keyCode == KeyEvent.VK_2 || keyCode == KeyEvent.VK_NUMPAD2) {
+            if (!difficultyKeyPressed && game.getState() == GameState.MENU) {
+                difficultyKeyPressed = true;
+                game.setDifficulty(Difficulty.HARD);
+            }
         }
     }
 
@@ -77,7 +95,18 @@ public class InputHandler extends MouseAdapter implements java.awt.event.KeyList
             spacePressed = false;
         } else if (keyCode == KeyEvent.VK_M) {
             mutePressed = false;
+        } else if (isDifficultyToggleKey(keyCode)
+                || keyCode == KeyEvent.VK_1 || keyCode == KeyEvent.VK_NUMPAD1
+                || keyCode == KeyEvent.VK_2 || keyCode == KeyEvent.VK_NUMPAD2) {
+            difficultyKeyPressed = false;
         }
+    }
+
+    private boolean isDifficultyToggleKey(int keyCode) {
+        return keyCode == KeyEvent.VK_LEFT
+                || keyCode == KeyEvent.VK_RIGHT
+                || keyCode == KeyEvent.VK_A
+                || keyCode == KeyEvent.VK_D;
     }
 
     @Override
