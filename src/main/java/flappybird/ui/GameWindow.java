@@ -14,7 +14,6 @@ import java.awt.event.WindowEvent;
  * Herda de {@link JFrame} (Swing), reaproveitando a infraestrutura de janelas do sistema operacional
  * e configurando os elementos específicos da aplicação.</p>
  */
-@SuppressWarnings({"serial", "this-escape"})
 public class GameWindow extends JFrame {
 
     private final GamePanel gamePanel;

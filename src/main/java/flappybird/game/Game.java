@@ -28,7 +28,6 @@ public class Game {
     private final CollisionDetector collisionDetector;
     private final ScoreManager scoreManager;
 
-    private int menuTick;
     private int gameOverCooldown;
 
     public Game() {
@@ -60,7 +59,6 @@ public class Game {
         this.pipeManager = pipeManager;
         this.collisionDetector = collisionDetector;
         this.scoreManager = scoreManager;
-        this.menuTick = 0;
         this.gameOverCooldown = 0;
         applyDifficultySettings();
     }
@@ -83,7 +81,6 @@ public class Game {
         if (state == GameState.MENU) {
             // No menu, o pássaro permanece na posição inicial batendo asas suavemente
             bird.updateMenuAnimation();
-            menuTick++;
         } else if (state == GameState.PLAYING) {
             // Atualiza física do pássaro e deslocamento dos obstáculos
             bird.update();
@@ -163,7 +160,6 @@ public class Game {
         scoreManager.reset();
         pipeManager.reset();
         bird.reset();
-        this.menuTick = 0;
         this.gameOverCooldown = 0;
     }
 

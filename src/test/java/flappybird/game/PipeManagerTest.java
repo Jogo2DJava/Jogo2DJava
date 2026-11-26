@@ -30,7 +30,6 @@ class PipeManagerTest {
         PipePair pair = manager.getPipePairs().get(0);
         assertTrue(pair.getTopPipe().getHeight() >= 60, "Altura mínima do cano superior deve ser respeitada");
 
-        int groundY = GameConfig.WINDOW_HEIGHT - GameConfig.GROUND_HEIGHT;
         int expectedGap = pair.getBottomPipe().getBounds().y - pair.getTopPipe().getHeight();
         assertEquals(GameConfig.PIPE_GAP, expectedGap, "A abertura livre deve corresponder exatamente ao PIPE_GAP");
     }
