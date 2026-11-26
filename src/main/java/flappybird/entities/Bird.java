@@ -27,13 +27,19 @@ public class Bird extends GameObject {
     private double velocityY;
     private int wingTick;
 
-    // Paleta de cores do pássaro (vetorial, estilo clássico)
-    private static final Color BODY_YELLOW = new Color(245, 196, 44);
-    private static final Color BELLY_CREAM = new Color(255, 235, 160);
-    private static final Color OUTLINE_BROWN = new Color(50, 35, 15);
-    private static final Color BEAK_ORANGE = new Color(235, 90, 30);
-    private static final Color WING_WHITE = new Color(255, 255, 255, 220);
-    private static final Color CHEEK_PINK = new Color(255, 150, 150, 160);
+    // Paleta de cores do dragãozinho (verde escuro com detalhes de fogo)
+    private static final Color BODY_GREEN = new Color(36, 118, 62);
+    private static final Color BODY_SHADE = new Color(22, 82, 42);
+    private static final Color BELLY_CREAM = new Color(210, 232, 168);
+    private static final Color OUTLINE_DARK = new Color(14, 36, 20);
+    private static final Color SPIKE_RED = new Color(220, 75, 28);
+    private static final Color HORN_IVORY = new Color(248, 240, 210);
+    private static final Color WING_MEMBRANE = new Color(62, 158, 88);
+    private static final Color WING_BONE = new Color(155, 218, 120);
+    private static final Color EYE_IRIS = new Color(240, 150, 20);
+    private static final Color FLAME_RED = new Color(235, 55, 15);
+    private static final Color FLAME_OUTER = new Color(255, 125, 20);
+    private static final Color FLAME_INNER = new Color(255, 235, 70);
 
     public Bird() {
         super(GameConfig.BIRD_START_X, GameConfig.BIRD_START_Y,
@@ -112,49 +118,159 @@ public class Bird extends GameObject {
 
         int px = (int) Math.round(getX());
         int py = (int) Math.round(getY());
+        int w = getWidth();
+        int h = getHeight();
 
-        // 1. Corpo principal (oval amarela com contorno escuro)
-        g.setColor(OUTLINE_BROWN);
-        g.fillOval(px - 1, py - 1, getWidth() + 2, getHeight() + 2);
-        g.setColor(BODY_YELLOW);
-        g.fillOval(px, py, getWidth(), getHeight());
+        int tailOffsetY = (int) Math.round(Math.sin(wingTick * 0.3) * 2);
+        int wingOffsetY = (int) Math.round(Math.sin(wingTick * 0.45) * 4);
 
-        // 2. Barriga clara
+        // 1. Cauda fininha de dragão (curvada para trás com um foguinho aceso na ponta)
+        int ty = py + tailOffsetY;
+        int[] tailOuterX = {px + 3, px - 4, px - 10, px - 15, px - 14, px - 9, px - 3, px + 3};
+        int[] tailOuterY = {py + 14, ty + 15, ty + 14, ty + 11, ty + 14, ty + 18, ty + 19, py + 19};
+        g.setColor(OUTLINE_DARK);
+        g.fillPolygon(tailOuterX, tailOuterY, 8);
+
+        int[] tailInnerX = {px + 3, px - 4, px - 10, px - 14, px - 13, px - 9, px - 3, px + 3};
+        int[] tailInnerY = {py + 15, ty + 16, ty + 15, ty + 12, ty + 13, ty + 17, ty + 18, py + 18};
+        g.setColor(BODY_GREEN);
+        g.fillPolygon(tailInnerX, tailInnerY, 8);
+
+        // Foguinho na ponta da cauda (chama subindo com 3 camadas: vermelho, laranja e amarelo)
+        int fx = px - 15;
+        int fy = ty + 12;
+        int[] fireRedX = {fx - 3, fx - 4, fx - 1, fx + 1, fx + 3, fx + 4, fx + 2};
+        int[] fireRedY = {fy, fy - 5, fy - 3, fy - 9, fy - 4, fy - 6, fy + 1};
+        g.setColor(FLAME_RED);
+        g.fillPolygon(fireRedX, fireRedY, 7);
+        g.fillOval(fx - 3, fy - 3, 7, 6);
+
+        int[] fireOrangeX = {fx - 2, fx - 2, fx + 1, fx + 3, fx + 2};
+        int[] fireOrangeY = {fy, fy - 4, fy - 7, fy - 3, fy + 1};
+        g.setColor(FLAME_OUTER);
+        g.fillPolygon(fireOrangeX, fireOrangeY, 5);
+        g.fillOval(fx - 2, fy - 2, 5, 5);
+
+        g.setColor(FLAME_INNER);
+        int[] fireYellowX = {fx - 1, fx + 1, fx + 2};
+        int[] fireYellowY = {fy, fy - 4, fy};
+        g.fillPolygon(fireYellowX, fireYellowY, 3);
+        g.fillOval(fx - 1, fy - 1, 3, 3);
+
+        // 2. Cristas dorsais (espinhos nas costas do dragão)
+        for (int i = 0; i < 2; i++) {
+            int sx = px + 2 + (i * 6);
+            int sy = py + 1 - i;
+            int[] spikeOutX = {sx, sx + 3, sx + 7};
+            int[] spikeOutY = {sy + 3, sy - 5, sy + 3};
+            g.setColor(OUTLINE_DARK);
+            g.fillPolygon(spikeOutX, spikeOutY, 3);
+
+            int[] spikeInX = {sx + 1, sx + 3, sx + 6};
+            int[] spikeInY = {sy + 3, sy - 3, sy + 3};
+            g.setColor(SPIKE_RED);
+            g.fillPolygon(spikeInX, spikeInY, 3);
+        }
+
+        // 3. Corpo principal do dragãozinho (verde escuro)
+        g.setColor(OUTLINE_DARK);
+        g.fillRoundRect(px - 1, py, w - 3, h + 1, 18, 18);
+        g.setColor(BODY_GREEN);
+        g.fillRoundRect(px, py + 1, w - 5, h - 1, 16, 16);
+
+        // 4. Chifrinho de marfim no topo da cabeça (desenhado sobre o contorno da cabeça)
+        int[] hornOutX = {px + 13, px + 6, px + 19};
+        int[] hornOutY = {py + 4, py - 6, py + 1};
+        g.setColor(OUTLINE_DARK);
+        g.fillPolygon(hornOutX, hornOutY, 3);
+
+        int[] hornInX = {px + 14, px + 8, px + 18};
+        int[] hornInY = {py + 3, py - 4, py + 2};
+        g.setColor(HORN_IVORY);
+        g.fillPolygon(hornInX, hornInY, 3);
+
+        // Sombra inferior do corpo
+        g.setColor(BODY_SHADE);
+        g.fillArc(px + 1, py + 5, w - 7, h - 5, 190, 160);
+
+        // 5. Barriga clara com listras de escamas
         g.setColor(BELLY_CREAM);
-        g.fillOval(px + 4, py + 8, getWidth() - 14, getHeight() - 10);
+        g.fillOval(px + 4, py + 9, w - 15, h - 11);
+        g.setColor(BODY_SHADE);
+        g.drawArc(px + 6, py + 11, 13, 5, 200, 140);
+        g.drawArc(px + 6, py + 15, 13, 5, 200, 140);
 
-        // 3. Bochecha rosada
-        g.setColor(CHEEK_PINK);
-        g.fillOval(px + 14, py + 12, 8, 6);
+        // 6. Focinho esculpido de dragão (à frente)
+        g.setColor(OUTLINE_DARK);
+        g.fillRoundRect(px + 20, py + 6, 16, 13, 10, 10);
+        g.setColor(BODY_GREEN);
+        g.fillRoundRect(px + 21, py + 7, 14, 11, 8, 8);
 
-        // 4. Asa animada (bate conforme o tempo)
-        int wingOffsetY = (int) (Math.sin(wingTick * 0.4) * 3);
-        g.setColor(OUTLINE_BROWN);
-        g.fillRoundRect(px + 4, py + 7 + wingOffsetY, 14, 10, 6, 6);
-        g.setColor(WING_WHITE);
-        g.fillRoundRect(px + 5, py + 8 + wingOffsetY, 12, 8, 4, 4);
+        // Sopro de fogo sutil quando o dragãozinho bate asas (subindo)
+        if (velocityY < -1.0) {
+            int[] flameOutX = {px + 35, px + 44, px + 40, px + 46, px + 35};
+            int[] flameOutY = {py + 12, py + 9, py + 14, py + 18, py + 16};
+            g.setColor(FLAME_OUTER);
+            g.fillPolygon(flameOutX, flameOutY, 5);
 
-        // 5. Olho grande clássico
-        g.setColor(OUTLINE_BROWN);
-        g.fillOval(px + 18, py + 2, 11, 11);
+            int[] flameInX = {px + 35, px + 41, px + 35};
+            int[] flameInY = {py + 13, py + 14, py + 16};
+            g.setColor(FLAME_INNER);
+            g.fillPolygon(flameInX, flameInY, 3);
+        }
+
+        // Narina do dragão
+        g.setColor(OUTLINE_DARK);
+        g.fillOval(px + 31, py + 9, 3, 3);
+
+        // Boca e presinha branca (dentinho de dragão)
+        g.setColor(OUTLINE_DARK);
+        g.drawLine(px + 24, py + 15, px + 34, py + 15);
+        int[] fangX = {px + 28, px + 30, px + 32};
+        int[] fangY = {py + 15, py + 19, py + 15};
         g.setColor(Color.WHITE);
-        g.fillOval(px + 19, py + 3, 9, 9);
-        // Pupila
+        g.fillPolygon(fangX, fangY, 3);
+        g.setColor(OUTLINE_DARK);
+        g.drawPolygon(fangX, fangY, 3);
+
+        // 7. Olho expressivo de dragão (íris dourada/laranja e pupila vertical)
+        g.setColor(OUTLINE_DARK);
+        g.fillOval(px + 17, py + 2, 11, 11);
+        g.setColor(Color.WHITE);
+        g.fillOval(px + 18, py + 3, 9, 9);
+        // Íris dourada/âmbar
+        g.setColor(EYE_IRIS);
+        g.fillOval(px + 21, py + 4, 5, 7);
+        // Pupila em fenda vertical de réptil/dragão
         g.setColor(Color.BLACK);
-        g.fillOval(px + 23, py + 5, 4, 5);
+        g.fillOval(px + 22, py + 4, 3, 7);
         // Brilho no olhar
         g.setColor(Color.WHITE);
-        g.fillOval(px + 24, py + 6, 2, 2);
+        g.fillOval(px + 21, py + 5, 2, 2);
+        // Sobrancelha de dragãozinho
+        g.setColor(BODY_SHADE);
+        int[] browX = {px + 16, px + 27, px + 26, px + 17};
+        int[] browY = {py + 2, py + 4, py + 2, py + 1};
+        g.fillPolygon(browX, browY, 4);
 
-        // 6. Bico alaranjado
-        g.setColor(OUTLINE_BROWN);
-        int[] beakX = {px + 26, px + 35, px + 26};
-        int[] beakY = {py + 10, py + 15, py + 19};
-        g.fillPolygon(beakX, beakY, 3);
-        g.setColor(BEAK_ORANGE);
-        int[] beakInnerX = {px + 26, px + 33, px + 26};
-        int[] beakInnerY = {py + 11, py + 15, py + 18};
-        g.fillPolygon(beakInnerX, beakInnerY, 3);
+        // 8. Asa de dragão (membrana recortada estilo morcego/dragão)
+        int wy = py + 7 + wingOffsetY;
+        int[] wingOutX = {px + 15, px + 2, px - 1, px + 6, px + 11, px + 16};
+        int[] wingOutY = {py + 11, wy - 6, wy + 7, wy + 3, wy + 7, py + 14};
+        g.setColor(OUTLINE_DARK);
+        g.fillPolygon(wingOutX, wingOutY, 6);
+
+        int[] wingMemX = {px + 15, px + 3, px + 1, px + 6, px + 11, px + 15};
+        int[] wingMemY = {py + 11, wy - 5, wy + 5, wy + 2, wy + 5, py + 13};
+        g.setColor(WING_MEMBRANE);
+        g.fillPolygon(wingMemX, wingMemY, 6);
+
+        // Nervura e osso superior da asa
+        g.setColor(OUTLINE_DARK);
+        g.drawLine(px + 8, wy - 2, px + 6, wy + 3);
+        g.setColor(WING_BONE);
+        g.drawLine(px + 15, py + 11, px + 3, wy - 5);
+        g.drawLine(px + 15, py + 12, px + 3, wy - 4);
 
         // Restaura a transformação gráfica original
         g.setTransform(originalTransform);
