@@ -20,14 +20,22 @@ import java.awt.event.MouseEvent;
 public class InputHandler extends MouseAdapter implements java.awt.event.KeyListener {
 
     private final Game game;
+    private final Runnable onToggleMute;
     private boolean spacePressed;
+    private boolean mutePressed;
 
     public InputHandler(Game game) {
+        this(game, null);
+    }
+
+    public InputHandler(Game game, Runnable onToggleMute) {
         if (game == null) {
             throw new IllegalArgumentException("O jogo não pode ser nulo.");
         }
         this.game = game;
+        this.onToggleMute = onToggleMute;
         this.spacePressed = false;
+        this.mutePressed = false;
     }
 
     private void handlePrimaryAction() {
@@ -54,6 +62,11 @@ public class InputHandler extends MouseAdapter implements java.awt.event.KeyList
             if (game.getState() == GameState.GAME_OVER) {
                 game.backToMenu();
             }
+        } else if (keyCode == KeyEvent.VK_M) {
+            if (!mutePressed && onToggleMute != null) {
+                mutePressed = true;
+                onToggleMute.run();
+            }
         }
     }
 
@@ -62,6 +75,8 @@ public class InputHandler extends MouseAdapter implements java.awt.event.KeyList
         int keyCode = e.getKeyCode();
         if (keyCode == KeyEvent.VK_SPACE || keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
             spacePressed = false;
+        } else if (keyCode == KeyEvent.VK_M) {
+            mutePressed = false;
         }
     }
 

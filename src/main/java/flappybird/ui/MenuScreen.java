@@ -42,6 +42,7 @@ public class MenuScreen implements Screen {
 
         // Instruções de controle
         DrawUtils.drawCenteredOutlinedText(g, "Comandos: [ESPAÇO] ou [MOUSE] para voar", 450, INSTRUCTION_FONT, TEXT_COLOR, OUTLINE_COLOR);
+        DrawUtils.drawCenteredOutlinedText(g, "[M] Ligar / Silenciar Música", 475, INSTRUCTION_FONT, TEXT_COLOR, OUTLINE_COLOR);
 
         // Rodapé acadêmico
         DrawUtils.drawCenteredOutlinedText(g, "Análise e Desenvolvimento de Sistemas • Java 2D POO", 550, FOOTER_FONT, new Color(240, 240, 240), OUTLINE_COLOR);
