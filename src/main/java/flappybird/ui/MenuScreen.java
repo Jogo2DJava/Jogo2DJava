@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 /**
  * Tela de menu inicial do jogo.
@@ -17,6 +18,20 @@ import java.awt.Graphics2D;
  * orientações de comandos e o recorde atual da sessão.</p>
  */
 public class MenuScreen implements Screen {
+
+    private static final int BOX_WIDTH = 120;
+    private static final int BOX_HEIGHT = 34;
+    private static final int BOX_GAP = 16;
+    private static final int BOX_Y = 312;
+    private static final int BOX_START_X = (GameConfig.WINDOW_WIDTH - ((BOX_WIDTH * 2) + BOX_GAP)) / 2;
+
+    /** Área clicável do botão de dificuldade MÉDIO no menu. */
+    public static final Rectangle MEDIUM_BUTTON_BOUNDS =
+            new Rectangle(BOX_START_X, BOX_Y, BOX_WIDTH, BOX_HEIGHT);
+
+    /** Área clicável do botão de dificuldade DIFÍCIL no menu. */
+    public static final Rectangle HARD_BUTTON_BOUNDS =
+            new Rectangle(BOX_START_X + BOX_WIDTH + BOX_GAP, BOX_Y, BOX_WIDTH, BOX_HEIGHT);
 
     private static final Font TITLE_FONT = new Font("SansSerif", Font.BOLD, 42);
     private static final Font SUBTITLE_FONT = new Font("SansSerif", Font.BOLD, 17);
@@ -66,15 +81,12 @@ public class MenuScreen implements Screen {
         String headerText = "MODO: < " + current.getLabel() + " >";
         DrawUtils.drawCenteredOutlinedText(g, headerText, 298, SELECTOR_FONT, activeHighlight, OUTLINE_COLOR);
 
-        int boxW = 120;
-        int boxH = 34;
-        int gap = 16;
-        int totalW = (boxW * 2) + gap;
-        int startX = (GameConfig.WINDOW_WIDTH - totalW) / 2;
-        int boxY = 312;
-
-        drawOptionBox(g, startX, boxY, boxW, boxH, "[1] MÉDIO", isMedium, ACCENT_COLOR);
-        drawOptionBox(g, startX + boxW + gap, boxY, boxW, boxH, "[2] DIFÍCIL", !isMedium, HARD_COLOR);
+        drawOptionBox(g, MEDIUM_BUTTON_BOUNDS.x, MEDIUM_BUTTON_BOUNDS.y,
+                MEDIUM_BUTTON_BOUNDS.width, MEDIUM_BUTTON_BOUNDS.height,
+                "[1] MÉDIO", isMedium, ACCENT_COLOR);
+        drawOptionBox(g, HARD_BUTTON_BOUNDS.x, HARD_BUTTON_BOUNDS.y,
+                HARD_BUTTON_BOUNDS.width, HARD_BUTTON_BOUNDS.height,
+                "[2] DIFÍCIL", !isMedium, HARD_COLOR);
     }
 
     private void drawOptionBox(Graphics2D g, int x, int y, int w, int h,

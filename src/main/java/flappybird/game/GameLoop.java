@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
  * A física é sempre processada em fatias exatas de 1/60 de segundo, independentemente de oscilações
  * no tempo de renderização do computador.</p>
  */
+@SuppressWarnings("this-escape")
 public class GameLoop implements ActionListener {
 
     /** Frequência alvo da lógica física: 60 atualizações por segundo. */

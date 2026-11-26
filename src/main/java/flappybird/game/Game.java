@@ -4,7 +4,6 @@ import flappybird.entities.Bird;
 import flappybird.entities.GameObject;
 import flappybird.entities.Ground;
 import flappybird.entities.PipePair;
-import flappybird.utils.GameConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,8 +67,8 @@ public class Game {
 
     private void applyDifficultySettings() {
         pipeManager.setDifficulty(difficulty);
-        bird.applyDifficulty(difficulty);
-        ground.applyDifficulty(difficulty);
+        bird.setGravity(difficulty.getGravity());
+        ground.setScrollSpeed(difficulty.getPipeSpeed());
     }
 
     /**
@@ -82,8 +81,8 @@ public class Game {
         }
 
         if (state == GameState.MENU) {
-            // No menu, o pássaro realiza flutuação suave
-            bird.reset();
+            // No menu, o pássaro permanece na posição inicial batendo asas suavemente
+            bird.updateMenuAnimation();
             menuTick++;
         } else if (state == GameState.PLAYING) {
             // Atualiza física do pássaro e deslocamento dos obstáculos

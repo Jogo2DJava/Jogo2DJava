@@ -4,8 +4,8 @@ import flappybird.game.Difficulty;
 import flappybird.game.Game;
 import flappybird.game.GameState;
 
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -18,7 +18,7 @@ import java.awt.event.MouseEvent;
  * {@link Game#start()}, {@link Game#restart()}). Ela também implementa controle de repetição para
  * garantir que manter a barra de espaço pressionada não gere múltiplos saltos indesejados.</p>
  */
-public class InputHandler extends MouseAdapter implements java.awt.event.KeyListener {
+public class InputHandler extends MouseAdapter implements KeyListener {
 
     private final Game game;
     private final Runnable onToggleMute;
@@ -116,8 +116,21 @@ public class InputHandler extends MouseAdapter implements java.awt.event.KeyList
 
     @Override
     public void mousePressed(MouseEvent e) {
-        // Dispara ação primária apenas com o botão esquerdo do mouse
+        if (e.getComponent() != null) {
+            e.getComponent().requestFocusInWindow();
+        }
+        // Dispara ação apenas com o botão esquerdo do mouse
         if (e.getButton() == MouseEvent.BUTTON1) {
+            if (game.getState() == GameState.MENU) {
+                if (MenuScreen.MEDIUM_BUTTON_BOUNDS.contains(e.getPoint())) {
+                    game.setDifficulty(Difficulty.MEDIUM);
+                    return;
+                }
+                if (MenuScreen.HARD_BUTTON_BOUNDS.contains(e.getPoint())) {
+                    game.setDifficulty(Difficulty.HARD);
+                    return;
+                }
+            }
             handlePrimaryAction();
         }
     }

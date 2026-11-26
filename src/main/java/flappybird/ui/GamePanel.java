@@ -21,6 +21,7 @@ import java.awt.RenderingHints;
  * Herda de {@link JPanel} e sobrescreve {@code paintComponent(Graphics)}. Delega a renderização
  * de cada tela polimorficamente através da interface {@link Screen}.</p>
  */
+@SuppressWarnings({"serial", "this-escape"})
 public class GamePanel extends JPanel {
 
     private final Game game;

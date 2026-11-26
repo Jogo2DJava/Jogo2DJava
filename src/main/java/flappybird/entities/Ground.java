@@ -1,6 +1,5 @@
 package flappybird.entities;
 
-import flappybird.game.Difficulty;
 import flappybird.utils.GameConfig;
 
 import java.awt.Color;
@@ -35,15 +34,15 @@ public class Ground extends GameObject {
     }
 
     /**
-     * Sincroniza a velocidade de rolagem do chão com a dificuldade selecionada.
+     * Define a velocidade horizontal de rolagem do chão.
      *
-     * @param difficulty modo de dificuldade ativo.
+     * @param scrollSpeed velocidade em pixels por tick (deve ser positiva).
      */
-    public void applyDifficulty(Difficulty difficulty) {
-        if (difficulty == null) {
-            throw new IllegalArgumentException("A dificuldade não pode ser nula.");
+    public void setScrollSpeed(double scrollSpeed) {
+        if (scrollSpeed <= 0) {
+            throw new IllegalArgumentException("A velocidade de rolagem do chão deve ser positiva.");
         }
-        this.scrollSpeed = difficulty.getPipeSpeed();
+        this.scrollSpeed = scrollSpeed;
     }
 
     @Override

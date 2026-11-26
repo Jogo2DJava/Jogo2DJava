@@ -1,6 +1,5 @@
 package flappybird.entities;
 
-import flappybird.game.Difficulty;
 import flappybird.utils.GameConfig;
 
 import java.awt.Color;
@@ -47,10 +46,6 @@ public class Bird extends GameObject {
         this(GameConfig.GRAVITY);
     }
 
-    public Bird(Difficulty difficulty) {
-        this(difficulty != null ? difficulty.getGravity() : GameConfig.GRAVITY);
-    }
-
     public Bird(double gravity) {
         super(GameConfig.BIRD_START_X, GameConfig.BIRD_START_Y,
                 GameConfig.BIRD_WIDTH, GameConfig.BIRD_HEIGHT);
@@ -63,15 +58,12 @@ public class Bird extends GameObject {
     }
 
     /**
-     * Aplica os parâmetros físicos correspondentes à dificuldade informada.
-     *
-     * @param difficulty modo de dificuldade ativo.
+     * Mantém o pássaro na posição inicial animando o bater de asas durante a tela de menu.
      */
-    public void applyDifficulty(Difficulty difficulty) {
-        if (difficulty == null) {
-            throw new IllegalArgumentException("A dificuldade não pode ser nula.");
-        }
-        this.gravity = difficulty.getGravity();
+    public void updateMenuAnimation() {
+        setPosition(GameConfig.BIRD_START_X, GameConfig.BIRD_START_Y);
+        this.velocityY = 0.0;
+        this.wingTick++;
     }
 
     /**
