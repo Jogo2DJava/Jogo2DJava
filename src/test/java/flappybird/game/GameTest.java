@@ -102,4 +102,51 @@ class GameTest {
         assertEquals(2, game.getBestScore(), "O recorde deve ser mantido mesmo voltando ao menu");
         assertEquals(GameConfig.BIRD_START_X, game.getBird().getX(), 0.001);
     }
+
+    @Test
+    @DisplayName("Deve iniciar com dificuldade MEDIUM por padrão e permitir alternância no MENU")
+    void deveIniciarComDificuldadeMediumEPermitirAlternanciaNoMenu() {
+        Game game = new Game();
+        assertEquals(Difficulty.MEDIUM, game.getDifficulty());
+
+        game.toggleDifficulty();
+        assertEquals(Difficulty.HARD, game.getDifficulty());
+
+        game.toggleDifficulty();
+        assertEquals(Difficulty.MEDIUM, game.getDifficulty());
+    }
+
+    @Test
+    @DisplayName("Deve bloquear troca de dificuldade durante a partida (estado PLAYING)")
+    void deveBloquearTrocaDeDificuldadeDurantePartida() {
+        Game game = new Game();
+        game.start();
+        assertEquals(GameState.PLAYING, game.getState());
+
+        game.toggleDifficulty();
+        assertEquals(Difficulty.MEDIUM, game.getDifficulty(),
+                "Não deve permitir alternar dificuldade durante PLAYING");
+
+        game.setDifficulty(Difficulty.HARD);
+        assertEquals(Difficulty.MEDIUM, game.getDifficulty(),
+                "setDifficulty deve ser ignorado fora do MENU");
+    }
+
+    @Test
+    @DisplayName("Deve propagar parâmetros do modo HARD para Bird, PipeManager e Ground ao iniciar")
+    void devePropagarParametrosDoModoHardAoIniciar() {
+        Game game = new Game();
+        game.setDifficulty(Difficulty.HARD);
+        game.start();
+
+        assertEquals(Difficulty.HARD, game.getPipeManager().getDifficulty());
+        assertEquals(Difficulty.HARD.getGravity(), game.getBird().getGravity(), 0.001);
+        assertEquals(Difficulty.HARD.getPipeSpeed(), game.getGround().getScrollSpeed(), 0.001);
+
+        // Avança 1 tick para gerar o primeiro par de canos no modo HARD
+        game.update();
+        assertFalse(game.getPipeManager().getPipePairs().isEmpty());
+        assertEquals(Difficulty.HARD.getPipeSpeed(),
+                game.getPipeManager().getPipePairs().get(0).getTopPipe().getSpeed(), 0.001);
+    }
 }

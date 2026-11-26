@@ -1,197 +1,170 @@
-# Guia de Apresentação Oral — Flappy Bird em Java 2D (POO)
+# Guia Rápido de Apresentação — Os 4 Pilares da POO
 
-## 1. Discurso de Abertura (Pitch de 30 segundos)
-
-> "Professor, nosso projeto é uma recriação completa do jogo **Flappy Bird em Java 2D**, desenvolvida do zero sem usar imagens prontas — todo o visual do pássaro, dos canos e do chão em movimento é desenhado via código. Nós estruturamos o sistema dividindo as responsabilidades em pacotes claros: temos o pacote `entities` para os objetos físicos do mundo do jogo, o pacote `game` que controla as regras da partida, pontuação e colisões, e o pacote `ui` que cuida das telas. Tudo foi pensado para aplicar na prática os quatro pilares da Programação Orientada a Objetos: **Abstração, Herança, Encapsulamento e Polimorfismo**."
-
----
-
-## ⭐ ROTEIRO ESPECIAL: A Sua Parte (Abstração e Polimorfismo — Fala + Onde Apontar no Código)
-
-Este roteiro foi desenhado para você **ler ou falar enquanto clica nos arquivos e aponta para as linhas exatas na tela**. Dica de ouro: antes de começar a apresentação, já deixe esses **5 arquivos abertos nas abas** da sua IDE na ordem abaixo!
-
-### Ordem das abas abertas na IDE:
-1. `GameObject.java` (pacote `flappybird.entities`)
-2. `Screen.java` (pacote `flappybird.ui`)
-3. `Bird.java` (pacote `flappybird.entities`)
-4. `Pipe.java` (pacote `flappybird.entities`)
-5. `Game.java` (pacote `flappybird.game`)
+> **Dica:** Deixe estas abas abertas na IDE antes de começar:
+> 1. `GameObject.java` (pacote `entities`)
+> 2. `Bird.java` (pacote `entities`)
+> 3. `Pipe.java` (pacote `entities`)
+> 4. `ScoreManager.java` (pacote `game`)
+> 5. *(Opcional)* `Difficulty.java` e `Game.java` (pacote `game`)
+>
+> **Para rodar o jogo na hora:** `.\mvnw.cmd compile exec:java` (ou `java -jar target/flappy-bird.jar`)
 
 ---
 
-### PARTE 1: Apresentando a ABSTRAÇÃO (2 exemplos no código)
+## 1. Apresentando ABSTRAÇÃO (Tempo: ~25 segundos)
 
-#### Passo 1.1 — Classe Abstrata `GameObject.java`
-* **🖱️ O que fazer na tela:** Clique na aba do arquivo `GameObject.java` (que fica na pasta `src/main/java/flappybird/entities/GameObject.java`).
-* **👉 Onde apontar com o mouse:**
-  * Primeiro aponte para a **linha 14**: `public abstract class GameObject`
-  * Depois desça até as **linhas 49 e 56**: `public abstract void update();` e `public abstract void draw(Graphics2D g);`
-* **💻 O que você vai ver na tela:**
-  ```java
-  // Linha 14:
-  public abstract class GameObject {
-  ...
-  // Linha 49:
-  public abstract void update();
+* **🖱️ O que abrir:** Aba **`GameObject.java`** (`src/main/java/flappybird/entities/GameObject.java`)
+* **👉 Onde apontar:** **Linha 14** (`public abstract class GameObject`) e **Linhas 49 e 56** (`update` e `draw`).
 
-  // Linha 56:
-  public abstract void draw(Graphics2D g);
-  ```
-* **🗣️ O que falar para o professor (citando onde está):**
-  > *"Professor, eu vou explicar e mostrar no código como nós aplicamos a **Abstração** e o **Polimorfismo**.*
-  > *Começando pela **Abstração**, nós usamos ela de duas formas: com Classe Abstrata e com Interface.*
-  > *Aqui no pacote `entities`, dentro do arquivo **`GameObject.java`**, na **linha 14**, nós declaramos `public abstract class GameObject`. Ela funciona como um molde: não faz sentido existir um 'objeto genérico' solto no jogo, só fazem sentido objetos reais como o pássaro, o cano ou o chão.*
-  > *Descendo aqui para a **linha 49** e para a **linha 56**, nós criamos dois métodos abstratos sem corpo: `public abstract void update()` e `public abstract void draw(Graphics2D g)`.Repare que eles terminam com ponto e vírgula e não têm chaves `{}`. Isso é um contrato obrigatório: qualquer classe que herdar de `GameObject` é obrigada a programar como ela se move no `update()` e como ela é desenhada na tela no `draw()`."*
+```java
+// Linha 14:
+public abstract class GameObject {
+...
+// Linha 49:
+public abstract void update();
+
+// Linha 56:
+public abstract void draw(Graphics2D g);
+```
+
+* **🗣️ O que falar:**
+  > *"Professor, vou mostrar a **Abstração** e o **Polimorfismo**.*
+  > *A **Abstração** está aqui no pacote `entities`, no arquivo **`GameObject.java`**. Na **linha 14**, criamos a classe abstrata `public abstract class GameObject`, que serve como um molde para tudo que existe no jogo.*
+  > *E nas **linhas 49 e 56**, declaramos os métodos abstratos `update()` e `draw()` sem corpo. Isso funciona como um contrato: obriga cada elemento do jogo a programar seu próprio movimento e seu próprio desenho."*
 
 ---
 
-#### Passo 1.2 — Interface `Screen.java`
-* **🖱️ O que fazer na tela:** Clique na aba do arquivo `Screen.java` (que fica na pasta `src/main/java/flappybird/ui/Screen.java`).
-* **👉 Onde apontar com o mouse:**
-  * Aponte para a **linha 16** (`public interface Screen`) e para a **linha 24** (`void draw(Graphics2D g, Game game);`).
-* **💻 O que você vai ver na tela:**
-  ```java
-  // Linha 16:
-  public interface Screen {
-      // Linha 24:
-      void draw(Graphics2D g, Game game);
-  }
-  ```
-* **🗣️ O que falar para o professor (citando onde está):**
-  > *"A segunda forma de **Abstração** está aqui no pacote `ui`, no arquivo **`Screen.java`**. Na **linha 16**, nós criamos a interface `public interface Screen`, e na **linha 24** definimos a assinatura `void draw(Graphics2D g, Game game)`. Com essa abstração, o painel do jogo sabe que toda tela — seja o Menu Inicial (`MenuScreen`), o Placar durante o jogo (`HudScreen`) ou a tela de Fim de Jogo (`GameOverScreen`) — segue exatamente esse mesmo contrato para ser desenhada."*
+## 2. Apresentando POLIMORFISMO (Tempo: ~35 segundos)
+
+* **🖱️ O que abrir:** Aba **`Bird.java`** (linhas 86 e 107) e Aba **`Pipe.java`** (linha 61).
+* **👉 Onde apontar:**
+  1. Em **`Bird.java`**: aponte para a **linha 86** (`@Override public void update()`) e para a **linha 107** (`@Override public Rectangle getBounds()`).
+  2. Em **`Pipe.java`**: aponte para a **linha 61** (`@Override public void update()`).
+
+```java
+// 1) Em Bird.java (Linha 86):
+@Override
+public void update() {
+    velocityY += gravity;   // Linha 89 (cai com a gravidade da dificuldade escolhida)
+    ...
+    moveBy(0, velocityY);   // Linha 97
+}
+
+// 2) Em Pipe.java (Linha 61):
+@Override
+public void update() {
+    moveBy(-speed, 0);      // Linha 64 (anda para a esquerda)
+}
+
+// 3) Em Bird.java (Linha 107):
+@Override
+public Rectangle getBounds() {
+    int insetX = 3;         // Linha 109 (diminui 3 pixels na colisão)
+    int insetY = 3;
+    ...
+}
+```
+
+* **🗣️ O que falar:**
+  > *"Já o **Polimorfismo** é fazer objetos diferentes responderem ao mesmo comando, cada um do seu jeito, usando a anotação `@Override`.*
+  > *Aqui no arquivo **`Bird.java`**, na **linha 86**, o método `update()` aplica a gravidade para o pássaro cair na vertical.*
+  > *Mas se eu clicar em **`Pipe.java`**, na **linha 61**, o mesmo método `update()` faz o cano andar para a esquerda na horizontal.*
+  > *Além disso, voltando em **`Bird.java`** na **linha 107**, nós também usamos `@Override` no método `getBounds()` para diminuir a caixa de colisão do pássaro em 3 pixels, deixando o jogo mais justo."*
 
 ---
 
-### PARTE 2: Apresentando o POLIMORFISMO (3 exemplos no código)
+## 3. Apresentando ENCAPSULAMENTO (Tempo: ~30 segundos)
 
-#### Passo 2.1 — `@Override` de `update()` comparando `Bird.java` com `Pipe.java`
-* **🖱️ O que fazer na tela:** Clique na aba do arquivo `Bird.java` (`src/main/java/flappybird/entities/Bird.java`) na **linha 62**, e depois alterne para `Pipe.java` (`src/main/java/flappybird/entities/Pipe.java`) na **linha 42**.
-* **👉 Onde apontar com o mouse:**
-  * Em `Bird.java`, aponte para as **linhas 62 a 76** (`@Override public void update()`).
-  * Em `Pipe.java`, aponte para as **linhas 42 a 46** (`@Override public void update()`).
-* **💻 O que você vai ver na tela:**
-  ```java
-  // Em Bird.java (Linhas 62 a 76):
-  @Override
-  public void update() {
-      velocityY += GameConfig.GRAVITY; // Linha 65
-      if (velocityY > GameConfig.MAX_FALL_SPEED) {
-          velocityY = GameConfig.MAX_FALL_SPEED;
-      }
-      moveBy(0, velocityY); // Linha 73
-      wingTick++;
-  }
+* **🖱️ O que abrir:** Aba **`ScoreManager.java`** (`src/main/java/flappybird/game/ScoreManager.java`) e depois a aba **`Bird.java`**.
+* **👉 Onde apontar:**
+  1. Em **`ScoreManager.java`**: **linhas 13 e 14** (atributos `private`), **linha 24** (`increment()`) e **linhas 38 e 42** (getters, só leitura).
+  2. Em **`Bird.java`**: **linha 27** (`private double velocityY`) e **linha 73** (`flap()`).
 
-  // Em Pipe.java (Linhas 42 a 46):
-  @Override
-  public void update() {
-      moveBy(-GameConfig.PIPE_SPEED, 0); // Linha 45
-  }
-  ```
-* **🗣️ O que falar para o professor (citando onde está):**
-  > *"Agora passando para o **Polimorfismo** — que significa 'muitas formas', ou seja, objetos diferentes responderem ao mesmo comando cada um do seu próprio jeito.*
-  > *Abrindo aqui o arquivo **`Bird.java`**, na **linha 62**, temos a anotação `@Override` (pronuncia-se 'ôver-ráid') sobrescrevendo o método `update()`. Veja que na **linha 65** o pássaro soma a gravidade (`velocityY += GameConfig.GRAVITY`) e na **linha 73** ele se move na vertical com `moveBy(0, velocityY)`.*
-  > *Já se eu abrir o arquivo **`Pipe.java`**, aqui na **linha 42**, nós temos exatamente o mesmo método `@Override public void update()`, só que na **linha 45** a implementação dele faz `moveBy(-GameConfig.PIPE_SPEED, 0)`, movendo o cano na horizontal para a esquerda. Ou seja: a chamada `update()` é a mesma, mas o comportamento muda de acordo com o objeto."*
+```java
+// 1) Em ScoreManager.java:
+private int score;            // Linha 13
+private int bestScore;        // Linha 14
 
----
+public void increment() {     // Linha 24
+    this.score++;             // Linha 25 (sobe só de 1 em 1)
+    if (this.score > this.bestScore) {
+        this.bestScore = this.score;   // Linha 27 (recorde atualizado automaticamente)
+    }
+}
 
-#### Passo 2.2 — Polimorfismo na Caixa de Colisão (`getBounds()`) em `Bird.java`
-* **🖱️ O que fazer na tela:** Volte para a aba `Bird.java` e aponte logo abaixo do `update()`, nas **linhas 83 a 93**.
-* **👉 Onde apontar com o mouse:**
-  * Aponte para `@Override public Rectangle getBounds()` na **linha 83** e para `int insetX = 3; int insetY = 3;` nas **linhas 85 e 86**.
-* **💻 O que você vai ver na tela:**
-  ```java
-  // Em Bird.java (Linhas 83 a 93):
-  @Override
-  public Rectangle getBounds() {
-      int insetX = 3;
-      int insetY = 3;
-      return new Rectangle(
-              (int) Math.round(getX()) + insetX,
-              (int) Math.round(getY()) + insetY,
-              getWidth() - (insetX * 2),
-              getHeight() - (insetY * 2)
-      );
-  }
-  ```
-* **🗣️ O que falar para o professor (citando onde está):**
-  > *"Um segundo ponto muito legal de **Polimorfismo** está logo aqui embaixo, ainda em **`Bird.java`**, nas **linhas 83 a 93**. Lá na classe mãe `GameObject` (na linha 63), o método `getBounds()` devolve um retângulo do tamanho exato do objeto para calcular colisões. Os canos e o chão usam esse comportamento padrão. Mas aqui no `Bird`, na **linha 83**, nós sobrescrevemos o `getBounds()` com `@Override` e criamos uma margem `insetX = 3` e `insetY = 3` (nas **linhas 85 e 86**), deixando a caixa de colisão do pássaro 3 pixels menor de cada lado. Quando o detector de colisão chama `bird.getBounds()`, o Polimorfismo entrega essa caixa reduzida automaticamente, deixando o jogo mais justo quando o pássaro passa raspando no cano."*
+public int getScore() { ... }      // Linha 38 (só leitura, sem setScore)
+public int getBestScore() { ... }  // Linha 42
+
+// 2) Em Bird.java:
+private double velocityY;     // Linha 27
+
+public void flap() {          // Linha 73
+    this.velocityY = GameConfig.JUMP_FORCE;   // Linha 74
+}
+```
+
+* **🗣️ O que falar:**
+  > *"O **Encapsulamento** é proteger os dados de um objeto para que ninguém de fora altere eles de qualquer jeito.*
+  > *Aqui no **`ScoreManager.java`**, nas **linhas 13 e 14**, os atributos `score` e `bestScore` são `private`. Não existe um `setScore()`: a única forma de mudar a pontuação é pelo método público `increment()` na **linha 24**, que soma de 1 em 1 e já atualiza o recorde sozinho na **linha 27**. Para ler, só existem os getters nas **linhas 38 e 42**.*
+  > *A mesma ideia está no **`Bird.java`**: na **linha 27**, a velocidade `velocityY` é `private`. Ninguém consegue jogar o pássaro para cima colocando qualquer número; para voar, é preciso chamar o método `flap()` da **linha 73**, que aplica sempre a mesma força de pulo."*
 
 ---
 
-#### Passo 2.3 — Coleção Polimórfica (`List<GameObject>`) em `Game.java`
-* **🖱️ O que fazer na tela:** Clique na aba `Game.java` (`src/main/java/flappybird/game/Game.java`) e role até a **linha 169**.
-* **👉 Onde apontar com o mouse:**
-  * Aponte para as **linhas 169 a 178** (`public List<GameObject> getGameObjects()`).
-* **💻 O que você vai ver na tela:**
-  ```java
-  // Em Game.java (Linhas 169 a 178):
-  public List<GameObject> getGameObjects() {
-      List<GameObject> objects = new ArrayList<>();
-      objects.add(bird);
-      objects.add(ground);
-      for (PipePair pair : pipeManager.getPipePairs()) {
-          objects.add(pair.getTopPipe());
-          objects.add(pair.getBottomPipe());
-      }
-      return Collections.unmodifiableList(objects);
-  }
-  ```
-* **🗣️ O que falar para o professor (citando onde está):**
-  > *"Por fim, para fechar o **Polimorfismo**, aqui no pacote `game`, dentro do arquivo **`Game.java`**, nas **linhas 169 a 178**, temos o método `getGameObjects()`. Na **linha 170**, nós criamos uma lista do tipo genérico da classe mãe: `List<GameObject> objects`. E nas **linhas 171 a 175**, nós colocamos dentro dessa mesma lista objetos de classes diferentes: o `bird` (linha 171), o `ground` (linha 172) e os canos `topPipe` e `bottomPipe` (linhas 174 e 175). Graças ao Polimorfismo, o Java trata todos eles de forma uniforme como `GameObject`."*
+## 4. Apresentando HERANÇA (Tempo: ~30 segundos)
+
+* **🖱️ O que abrir:** Abas **`Bird.java`**, **`Pipe.java`** e **`GameObject.java`**.
+* **👉 Onde apontar:**
+  1. **`extends GameObject`**: `Bird.java` **linha 25**, `Pipe.java` **linha 15** e `Ground.java` **linha 15**.
+  2. **`super(...)`** chamando o construtor da classe mãe: `Bird.java` **linha 50** e `Pipe.java` **linha 53**.
+  3. Em **`GameObject.java`**: **linhas 17 a 26** (atributos `x`, `y`, `width`, `height`) e **linha 73** (`protected void moveBy`).
+
+```java
+// 1) As classes filhas herdam da classe mãe:
+public class Bird extends GameObject {     // Bird.java, Linha 25
+public class Pipe extends GameObject {     // Pipe.java, Linha 15
+public class Ground extends GameObject {   // Ground.java, Linha 15
+
+// 2) Cada filha repassa posição e tamanho para a mãe:
+super(GameConfig.BIRD_START_X, GameConfig.BIRD_START_Y, ...);   // Bird.java, Linha 50
+super(x, y, width, height);                                      // Pipe.java, Linha 53
+
+// 3) O que é herdado, em GameObject.java:
+private double x;               // Linha 17
+private double y;               // Linha 20
+private final int width;        // Linha 23
+private final int height;       // Linha 26
+
+protected void moveBy(double dx, double dy) { ... }   // Linha 73 (usado por Bird e Pipe)
+```
+
+* **🗣️ O que falar:**
+  > *"A **Herança** é quando uma classe filha reaproveita tudo o que a classe mãe já tem.*
+  > *Aqui no **`Bird.java`**, na **linha 25**, temos `Bird extends GameObject`. O mesmo acontece no **`Pipe.java`** e no **`Ground.java`**, ambos na **linha 15**. Ou seja: o pássaro, o cano e o chão **são um** `GameObject`.*
+  > *Na **linha 50 do `Bird`** e na **linha 53 do `Pipe`**, a palavra `super(...)` chama o construtor da classe mãe, passando posição e tamanho.*
+  > *E no **`GameObject.java`**, nas **linhas 17 a 26**, estão os atributos `x`, `y`, largura e altura, junto com o método `moveBy()` na **linha 73**. Esse código foi escrito **uma única vez** e as três classes filhas usam sem repetir nada — por exemplo, o `Bird` chama `moveBy(0, velocityY)` e o `Pipe` chama `moveBy(-speed, 0)`."*
 
 ---
 
-## 2. Mapa Geral dos 4 Critérios Avaliativos (Resumo da Equipe)
+## 5. Extra: Modos de Dificuldade e Música (Caso sobre tempo — ~20 segundos)
 
-### 🔒 1. Encapsulamento
-* **O Conceito em 1 Frase (Analogia):** É como o cofre de um placar eletrônico ou o motor fechado de um carro: ninguém de fora pode colocar a mão direto nas engrenagens para adulterar os pontos ou teletransportar o pássaro; você só interage usando os botões permitidos.
-* **Onde está no NOSSO código:**
-  * **No placar (`src/main/java/flappybird/game/ScoreManager.java`, linhas 11–45):** Os atributos `private int score` (linha 13) e `private int bestScore` (linha 14) são privados (`private`). Não existe um método `setScore(999)`. A única forma de somar pontos é pelo método público `increment()` (linha 24), que soma de 1 em 1 e já atualiza o recorde automaticamente.
-  * **No pássaro e na base (`src/main/java/flappybird/entities/GameObject.java`, linhas 16–27 e `src/main/java/flappybird/entities/Bird.java`, linhas 27–51):** As coordenadas `private double x` e `private double y` em `GameObject` e a velocidade de queda `private double velocityY` em `Bird` (linha 27) são privadas. Para o pássaro voar na tela, o jogo chama o método público `flap()` (linha 49 de `Bird.java`), que aplica a força de pulo configurada.
-  * **Proteção de listas (`src/main/java/flappybird/game/PipeManager.java`, linhas 104–106 e `src/main/java/flappybird/game/Game.java`, linhas 169–178):** Os métodos `getPipePairs()` e `getGameObjects()` usam `Collections.unmodifiableList(...)`, entregando uma lista "somente leitura" para ninguém apagar canos ou objetos por acidente.
-* **O que falar para o professor (Script pronto):**
-  > *"Professor, aplicamos o **Encapsulamento** protegendo os atributos com o modificador `private` (pronuncia-se 'práivet'). Um ótimo exemplo está aqui na classe `ScoreManager`: o `score` e o `bestScore` são privados e não têm 'setters' livres. O placar que aparece na tela só pode subir de 1 em 1 através do método `increment()`, impedindo que qualquer outra parte do código adultere a pontuação. Além disso, em `PipeManager`, retornamos a lista de canos com `Collections.unmodifiableList`, aplicando encapsulamento defensivo."*
-
-### 🧬 2. Herança
-* **O Conceito em 1 Frase (Analogia):** É como o "DNA de família": em vez de programar do zero que o pássaro tem posição `(x, y)` e tamanho, que o cano também tem `(x, y)` e tamanho, e o chão também, criamos um "pai" com essas características e todos os filhos herdam isso prontinho.
-* **Onde está no NOSSO código:**
-  * Palavra-chave `extends` (pronuncia-se *ékstends*) nas três classes filhas do pacote `entities` que herdam da classe mãe `GameObject` (`src/main/java/flappybird/entities/GameObject.java`, linha 14):
-    1. `src/main/java/flappybird/entities/Bird.java` (linha 25): `public class Bird extends GameObject` (usa `super(...)` na linha 39 e herda `moveBy`, `setPosition`, `getX()`, `getY()`).
-    2. `src/main/java/flappybird/entities/Pipe.java` (linha 15): `public class Pipe extends GameObject` (usa `super(...)` na linha 38).
-    3. `src/main/java/flappybird/entities/Ground.java` (linha 15): `public class Ground extends GameObject` (usa `super(...)` na linha 29).
-* **O que falar para o professor (Script pronto):**
-  > *"Para demonstrar a **Herança**, criamos a superclasse `GameObject` que concentra tudo o que qualquer elemento visual do jogo tem em comum: posição `x`, `y`, largura `width`, altura `height` e o cálculo da caixa de colisão `getBounds()`. Aí as classes `Bird`, `Pipe` e `Ground` usam a palavra-chave `extends GameObject` e acionam o construtor `super()` para reaproveitar toda essa estrutura sem repetir código."*
-
-### 📐 3. Abstração
-* **O Conceito em 1 Frase (Analogia):** É como um "molde" ou "contrato de trabalho": sabemos que todo objeto do jogo precisa *se atualizar* e *se desenhar na tela*, mas o conceito genérico de "Objeto do Jogo" não existe sozinho na tela — só existem os objetos reais (pássaro, cano, chão) que seguem esse contrato.
-* **Onde está no NOSSO código:**
-  * **Classe Abstrata (`src/main/java/flappybird/entities/GameObject.java`, linhas 14, 49 e 56):** `public abstract class GameObject`, `public abstract void update();` e `public abstract void draw(Graphics2D g);`.
-  * **Interface de Telas (`src/main/java/flappybird/ui/Screen.java`, linhas 16 e 24):** `public interface Screen` com `void draw(Graphics2D g, Game game);`.
-
-### 🎭 4. Polimorfismo
-* **O Conceito em 1 Frase (Analogia):** É dar a **mesma ordem** para objetos diferentes e cada um obedecer do seu próprio jeito: quando o jogo grita *"Atualizar (`update`)!"*, o pássaro cai com a gravidade, o cano anda para a esquerda e o chão gira as listras da grama.
-* **Onde está no NOSSO código:**
-  * **Sobrescrita (`@Override`) de `update()`:** `Bird.java` (linha 62), `Pipe.java` (linha 42) e `Ground.java` (linha 34).
-  * **Sobrescrita (`@Override`) de `getBounds()`:** `Bird.java` (linhas 83–93).
-  * **Coleção Polimórfica (`List<GameObject>`):** `Game.java` (linhas 169–178).
-  * **Renderização Polimórfica de Telas (`Screen`):** `GamePanel.java` (linhas 27–29 e 105–111).
+* **🎮 No jogo:** no menu, use **`←` / `→`** (ou **`1` / `2`**, ou clique nos botões) para escolher **MÉDIO** ou **DIFÍCIL**. A tecla **`M`** liga/desliga a música.
+* **🖱️ O que abrir:** **`Difficulty.java`** (pacote `game`).
+* **👉 Onde apontar:** **Linha 13** (`public enum Difficulty`), **linhas 18 e 29** (`MEDIUM` e `HARD`) e **linhas 37 a 41** (atributos `private final`).
+* **🗣️ O que falar:**
+  > *"Também adicionamos dois modos de jogo. Cada modo é uma constante do enum `Difficulty` e guarda seus próprios valores de velocidade dos canos, tamanho do vão, intervalo entre canos e gravidade em atributos `private final` (linhas 37 a 41) — isso é **Encapsulamento**, porque ninguém consegue alterar esses valores por fora.*
+  > *No `Game.java`, linha 206, o método `setDifficulty()` só deixa trocar o modo quando o jogo está no **menu**; durante a partida a troca é bloqueada. E na linha 66, `applyDifficultySettings()` repassa os valores para o pássaro, os canos e o chão."*
 
 ---
 
-## 3. Simulado: Perguntas Difíceis do Professor (Focadas em Abstração e Polimorfismo)
+## 6. Respostas Curtas para Perguntas do Professor
 
-### Pergunta 1 (Sobre Abstração): *"Por que vocês criaram `GameObject` como uma Classe Abstrata (`abstract class`) e `Screen` como uma Interface (`interface`)? Qual a diferença entre as duas escolhas aqui no projeto?"*
-* **Onde isso está:** `GameObject.java` (linha 14) vs. `Screen.java` (linha 16)
-* **O que responder com segurança:**
-  > *"Professor, nós usamos **classe abstrata** no `GameObject` porque, além do contrato dos métodos `update()` e `draw()`, os objetos do mundo físico precisam compartilhar **estado (atributos)** — todo mundo tem `x`, `y`, `width` e `height` guardados lá dentro (linhas 17 a 26). Já nas telas (`Screen.java`, linha 16), usamos **interface** porque `MenuScreen`, `HudScreen` e `GameOverScreen` não têm coordenadas físicas em comum; elas só precisam assinar o mesmo contrato de comportamento, que é o método `draw(Graphics2D g, Game game)` na linha 24."*
-
-### Pergunta 2 (Sobre Polimorfismo): *"O que aconteceria se vocês apagassem o método `getBounds()` da linha 83 da classe `Bird`? O código daria erro de compilação?"*
-* **Onde isso está:** `Bird.java` (linha 83) e `GameObject.java` (linha 63)
-* **O que responder com segurança:**
-  > *"Não daria erro de compilação, professor! Porque a classe mãe `GameObject` já tem um `getBounds()` padrão implementado na **linha 63**. Se a gente apagasse o `@Override` do `Bird`, ele simplesmente usaria o retângulo completo da classe mãe. Nós sobrescrevemos polimorficamente na **linha 83 do `Bird`** apenas para diminuir 3 pixels de cada lado e deixar a colisão mais justa para o jogador."*
-
-### Pergunta 3 (Sobre Herança vs. Composição): *"Eu vi que `Bird`, `Pipe` e `Ground` herdam de `GameObject`. Por que a classe `PipePair` (par de canos) também está no pacote `entities`, mas NÃO tem `extends GameObject`?"*
-* **Onde isso está:** `src/main/java/flappybird/entities/PipePair.java` (linhas 16–20)
-* **O que responder com segurança:**
-  > *"Professor, nós fizemos isso de propósito para aplicar **Composição** em vez de Herança. Um `GameObject` representa um objeto único que tem uma única caixa de colisão retangular (`getBounds()`). Já o `PipePair` tem um buraco no meio onde o pássaro passa para pontuar. Se ele herdasse de `GameObject`, a caixa de colisão dele fecharia o vão inteiro e o pássaro bateria numa parede invisível. Por isso, o `PipePair` é **composto** por dois objetos `Pipe` separados (`topPipe` na linha 18 e `bottomPipe` na linha 19)."*
+1. **"Por que `GameObject` é abstrata?"**
+   > *"Porque não existe um 'objeto genérico' na tela; só existem objetos reais (pássaro, cano e chão) que seguem o molde do `GameObject`."*
+2. **"O que acontece se apagar o `getBounds()` da linha 107 do `Bird`?"**
+   > *"Continua funcionando sem erro, porque ele passa a usar o `getBounds()` padrão da linha 63 do `GameObject` (sem os 3 pixels de desconto)."*
+3. **"Por que `PipePair` (par de canos) não tem `extends GameObject`?"**
+   > *"Porque o par de canos tem um vão vazio no meio para o pássaro passar. Por isso usamos Composição: ele guarda dois objetos `Pipe` separados (`topPipe` e `bottomPipe` nas linhas 18 e 19 de `PipePair.java`)."*
+4. **"Por que a dificuldade é um `enum` e não um `int` ou `String`?"**
+   > *"Porque o `enum` só aceita os valores que existem (`MEDIUM` e `HARD`), então não dá para passar um valor inválido. E cada modo já carrega seus próprios parâmetros juntos, em vez de espalhar números soltos pelo código."*
+5. **"Os testes ainda passam?"**
+   > *"Sim, rodando `.\mvnw.cmd test` são **44 testes** passando, incluindo os novos testes da dificuldade e do teclado."*

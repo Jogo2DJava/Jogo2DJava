@@ -30,8 +30,13 @@ public class GameWindow extends JFrame {
         pack();
         setLocationRelativeTo(null);
 
-        // Libera recursos de áudio e para o loop ao fechar a janela
+        // Garante foco no painel ao abrir e libera recursos de áudio ao fechar a janela
         addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                gamePanel.requestFocusInWindow();
+            }
+
             @Override
             public void windowClosing(WindowEvent e) {
                 gamePanel.stopGameLoop();

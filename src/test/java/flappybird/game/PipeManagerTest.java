@@ -30,7 +30,6 @@ class PipeManagerTest {
         PipePair pair = manager.getPipePairs().get(0);
         assertTrue(pair.getTopPipe().getHeight() >= 60, "Altura mínima do cano superior deve ser respeitada");
 
-        int groundY = GameConfig.WINDOW_HEIGHT - GameConfig.GROUND_HEIGHT;
         int expectedGap = pair.getBottomPipe().getBounds().y - pair.getTopPipe().getHeight();
         assertEquals(GameConfig.PIPE_GAP, expectedGap, "A abertura livre deve corresponder exatamente ao PIPE_GAP");
     }
@@ -63,5 +62,23 @@ class PipeManagerTest {
 
         manager.reset();
         assertTrue(manager.getPipePairs().isEmpty(), "A lista de obstáculos deve ser esvaziada no reset");
+    }
+
+    @Test
+    @DisplayName("Deve aplicar menor abertura vertical e maior velocidade aos canos no modo HARD")
+    void deveAplicarParametrosDoModoHardNosCanosGerados() {
+        PipeManager hardManager = new PipeManager(new Random(42), Difficulty.HARD);
+        hardManager.update(); // gera o primeiro par no tick 0 e já aplica 1 update de deslocamento
+
+        assertEquals(1, hardManager.getPipePairs().size());
+        PipePair pair = hardManager.getPipePairs().get(0);
+
+        int actualGap = pair.getBottomPipe().getBounds().y - pair.getTopPipe().getHeight();
+        assertEquals(Difficulty.HARD.getPipeGap(), actualGap,
+                "A abertura vertical deve usar o PIPE_GAP do modo HARD");
+        assertEquals(Difficulty.HARD.getPipeSpeed(), pair.getTopPipe().getSpeed(), 0.001,
+                "A velocidade do cano deve corresponder ao modo HARD");
+        assertEquals(GameConfig.WINDOW_WIDTH - Difficulty.HARD.getPipeSpeed(), pair.getX(), 0.001,
+                "O deslocamento no primeiro tick deve usar a velocidade mais rápida do modo HARD");
     }
 }

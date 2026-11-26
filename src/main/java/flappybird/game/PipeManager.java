@@ -28,19 +28,28 @@ public class PipeManager {
 
     private final List<PipePair> pipePairs;
     private final Random random;
+    private Difficulty difficulty;
     private int spawnTimer;
 
     private static final int MIN_PIPE_HEIGHT = 60;
 
     public PipeManager() {
-        this(new Random());
+        this(new Random(), Difficulty.MEDIUM);
     }
 
     public PipeManager(Random random) {
+        this(random, Difficulty.MEDIUM);
+    }
+
+    public PipeManager(Random random, Difficulty difficulty) {
         if (random == null) {
             throw new IllegalArgumentException("O gerador aleatório não pode ser nulo.");
         }
+        if (difficulty == null) {
+            throw new IllegalArgumentException("A dificuldade não pode ser nula.");
+        }
         this.random = random;
+        this.difficulty = difficulty;
         this.pipePairs = new ArrayList<>();
         this.spawnTimer = 0;
     }
@@ -49,10 +58,10 @@ public class PipeManager {
      * Atualiza a movimentação dos obstáculos, gera novos pares e descarta os que saíram da tela.
      */
     public void update() {
-        // Geração periódica de novos pares de canos
+        // Geração periódica de novos pares de canos conforme o intervalo da dificuldade ativa
         if (spawnTimer <= 0) {
             spawnPipePair();
-            spawnTimer = GameConfig.PIPE_SPAWN_INTERVAL;
+            spawnTimer = difficulty.getPipeSpawnInterval();
         } else {
             spawnTimer--;
         }
@@ -68,12 +77,13 @@ public class PipeManager {
 
     private void spawnPipePair() {
         int groundY = GameConfig.WINDOW_HEIGHT - GameConfig.GROUND_HEIGHT;
-        int maxTopHeight = groundY - GameConfig.PIPE_GAP - MIN_PIPE_HEIGHT;
+        int gap = difficulty.getPipeGap();
+        int maxTopHeight = groundY - gap - MIN_PIPE_HEIGHT;
         int availableRange = maxTopHeight - MIN_PIPE_HEIGHT;
 
         int topHeight = MIN_PIPE_HEIGHT + (availableRange > 0 ? random.nextInt(availableRange) : 0);
 
-        PipePair pair = new PipePair(GameConfig.WINDOW_WIDTH, topHeight, GameConfig.PIPE_GAP);
+        PipePair pair = new PipePair(GameConfig.WINDOW_WIDTH, topHeight, gap, difficulty.getPipeSpeed());
         pipePairs.add(pair);
     }
 
@@ -103,5 +113,16 @@ public class PipeManager {
      */
     public List<PipePair> getPipePairs() {
         return Collections.unmodifiableList(pipePairs);
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
+        if (difficulty == null) {
+            throw new IllegalArgumentException("A dificuldade não pode ser nula.");
+        }
+        this.difficulty = difficulty;
     }
 }

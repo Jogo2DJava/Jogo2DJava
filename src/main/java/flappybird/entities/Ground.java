@@ -15,6 +15,7 @@ import java.awt.Graphics2D;
 public class Ground extends GameObject {
 
     private double scrollOffset;
+    private double scrollSpeed;
 
     // Paleta de cores do chão
     private static final Color GRASS_TOP = new Color(115, 191, 46);
@@ -29,12 +30,29 @@ public class Ground extends GameObject {
         super(0, GameConfig.WINDOW_HEIGHT - GameConfig.GROUND_HEIGHT,
                 GameConfig.WINDOW_WIDTH, GameConfig.GROUND_HEIGHT);
         this.scrollOffset = 0.0;
+        this.scrollSpeed = GameConfig.PIPE_SPEED;
+    }
+
+    /**
+     * Define a velocidade horizontal de rolagem do chão.
+     *
+     * @param scrollSpeed velocidade em pixels por tick (deve ser positiva).
+     */
+    public void setScrollSpeed(double scrollSpeed) {
+        if (scrollSpeed <= 0) {
+            throw new IllegalArgumentException("A velocidade de rolagem do chão deve ser positiva.");
+        }
+        this.scrollSpeed = scrollSpeed;
     }
 
     @Override
     public void update() {
         // Incrementa o deslocamento visual sincronizado com a velocidade dos canos
-        scrollOffset = (scrollOffset + GameConfig.PIPE_SPEED) % STRIPE_SPACING;
+        scrollOffset = (scrollOffset + scrollSpeed) % STRIPE_SPACING;
+    }
+
+    public double getScrollSpeed() {
+        return scrollSpeed;
     }
 
     @Override
